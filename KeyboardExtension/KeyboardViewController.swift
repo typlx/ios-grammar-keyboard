@@ -1,0 +1,255 @@
+import UIKit
+
+final class KeyboardViewController: UIInputViewController {
+
+    private let grammarToolbar = GrammarToolbar()
+    private var keyboardView: UIView?
+    private var currentProvider: (any GrammarProvider)?
+    private var pendingCorrectedText: String?
+
+    // Tracks the last text seen from the proxy to detect changes.
+    private var lastSeenText: String = ""
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configureProvider()
+        setupToolbar()
+        setupKeyboard()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        configureProvider()
+    }
+
+    // MARK: - Provider
+
+    private func configureProvider() {
+        let config = AppGroupConfig.activeProviderConfig()
+        currentProvider = ProviderRegistry.shared.makeProvider(config: config)
+    }
+
+    // MARK: - Layout
+
+    private func setupToolbar() {
+        grammarToolbar.delegate = self
+        grammarToolbar.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(grammarToolbar)
+        NSLayoutConstraint.activate([
+            grammarToolbar.topAnchor.constraint(equalTo: view.topAnchor),
+            grammarToolbar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            grammarToolbar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            grammarToolbar.heightAnchor.constraint(equalToConstant: 44)
+        ])
+    }
+
+    private func setupKeyboard() {
+        // Build a simple standard QWERTY-style keyboard using UIButtons.
+        // In a production build this would be replaced with a full custom keyboard layout.
+        let keyboard = buildQWERTYView()
+        keyboard.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(keyboard)
+        NSLayoutConstraint.activate([
+            keyboard.topAnchor.constraint(equalTo: grammarToolbar.bottomAnchor),
+            keyboard.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            keyboard.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            keyboard.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        keyboardView = keyboard
+    }
+
+    private func buildQWERTYView() -> UIView {
+        let rows: [[String]] = [
+            ["q","w","e","r","t","y","u","i","o","p"],
+            ["a","s","d","f","g","h","j","k","l"],
+            ["z","x","c","v","b","n","m"],
+        ]
+        let container = UIView()
+        container.backgroundColor = UIColor(white: 0.82, alpha: 1)
+
+        var previousRow: UIView?
+        for (_, row) in rows.enumerated() {
+            let rowView = buildKeyRow(keys: row)
+            rowView.translatesAutoresizingMaskIntoConstraints = false
+            container.addSubview(rowView)
+            NSLayoutConstraint.activate([
+                rowView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 4),
+                rowView.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -4),
+                rowView.heightAnchor.constraint(equalToConstant: 42)
+            ])
+            if let prev = previousRow {
+                rowView.topAnchor.constraint(equalTo: prev.bottomAnchor, constant: 4).isActive = true
+            } else {
+                rowView.topAnchor.constraint(equalTo: container.topAnchor, constant: 4).isActive = true
+            }
+            previousRow = rowView
+        }
+
+        // Bottom row: space + delete + return
+        let bottomRow = buildBottomRow()
+        bottomRow.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(bottomRow)
+        if let prev = previousRow {
+            NSLayoutConstraint.activate([
+                bottomRow.topAnchor.constraint(equalTo: prev.bottomAnchor, constant: 4),
+                bottomRow.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 4),
+                bottomRow.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -4),
+                bottomRow.heightAnchor.constraint(equalToConstant: 42),
+                bottomRow.bottomAnchor.constraint(lessThanOrEqualTo: container.bottomAnchor, constant: -4)
+            ])
+        }
+
+        return container
+    }
+
+    private func buildKeyRow(keys: [String]) -> UIStackView {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.distribution = .fillEqually
+        stack.spacing = 4
+        for key in keys {
+            let btn = makeKeyButton(title: key)
+            btn.addTarget(self, action: #selector(keyTapped(_:)), for: .touchUpInside)
+            btn.accessibilityLabel = key
+            stack.addArrangedSubview(btn)
+        }
+        return stack
+    }
+
+    private func buildBottomRow() -> UIStackView {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.spacing = 4
+
+        let spaceBtn = makeKeyButton(title: "space")
+        spaceBtn.tag = 1
+        spaceBtn.addTarget(self, action: #selector(spaceTapped), for: .touchUpInside)
+
+        let deleteBtn = makeKeyButton(title: "⌫")
+        deleteBtn.tag = 2
+        deleteBtn.addTarget(self, action: #selector(deleteTapped), for: .touchUpInside)
+
+        let returnBtn = makeKeyButton(title: "return")
+        returnBtn.tag = 3
+        returnBtn.addTarget(self, action: #selector(returnTapped), for: .touchUpInside)
+
+        stack.addArrangedSubview(deleteBtn)
+        stack.addArrangedSubview(spaceBtn)
+        stack.addArrangedSubview(returnBtn)
+
+        deleteBtn.widthAnchor.constraint(equalTo: spaceBtn.widthAnchor, multiplier: 0.5).isActive = true
+        returnBtn.widthAnchor.constraint(equalTo: spaceBtn.widthAnchor, multiplier: 0.7).isActive = true
+
+        return stack
+    }
+
+    private func makeKeyButton(title: String) -> UIButton {
+        let btn = UIButton(type: .system)
+        btn.setTitle(title, for: .normal)
+        btn.backgroundColor = .white
+        btn.setTitleColor(.black, for: .normal)
+        btn.titleLabel?.font = .systemFont(ofSize: 17)
+        btn.layer.cornerRadius = 5
+        btn.layer.shadowColor = UIColor.black.cgColor
+        btn.layer.shadowOpacity = 0.25
+        btn.layer.shadowOffset = CGSize(width: 0, height: 1)
+        btn.layer.shadowRadius = 0
+        return btn
+    }
+
+    // MARK: - Key actions
+
+    @objc private func keyTapped(_ sender: UIButton) {
+        guard let title = sender.currentTitle else { return }
+        textDocumentProxy.insertText(title)
+    }
+
+    @objc private func spaceTapped() {
+        textDocumentProxy.insertText(" ")
+    }
+
+    @objc private func deleteTapped() {
+        textDocumentProxy.deleteBackward()
+    }
+
+    @objc private func returnTapped() {
+        textDocumentProxy.insertText("\n")
+    }
+
+    // MARK: - Text Document Proxy Helpers
+
+    private func extractCurrentSentence() -> String {
+        let before = textDocumentProxy.documentContextBeforeInput ?? ""
+        let after = textDocumentProxy.documentContextAfterInput ?? ""
+        let full = before + after
+        // Extract the last sentence/paragraph as the correction target.
+        if let range = before.range(of: ".", options: .backwards) {
+            let start = before.index(after: range.lowerBound)
+            return String(before[start...] + after).trimmingCharacters(in: .whitespaces)
+        }
+        return full.trimmingCharacters(in: .whitespaces)
+    }
+
+    private func replaceCurrentSentence(with corrected: String) {
+        let before = textDocumentProxy.documentContextBeforeInput ?? ""
+        let after = textDocumentProxy.documentContextAfterInput ?? ""
+
+        // Move to end of current sentence.
+        if !after.isEmpty {
+            textDocumentProxy.adjustTextPosition(byCharacterOffset: after.count)
+        }
+        // Delete before+after characters.
+        let totalChars = before.count + after.count
+        for _ in 0..<totalChars {
+            textDocumentProxy.deleteBackward()
+        }
+        textDocumentProxy.insertText(corrected)
+    }
+}
+
+// MARK: - GrammarToolbarDelegate
+
+extension KeyboardViewController: GrammarToolbarDelegate {
+    func grammarToolbarDidTapFix(_ toolbar: GrammarToolbar) {
+        guard hasFullAccess else {
+            toolbar.showError("Enable Full Access in Settings → General → Keyboard.")
+            return
+        }
+        guard let provider = currentProvider else {
+            toolbar.showError("No provider configured.")
+            return
+        }
+
+        if let corrected = pendingCorrectedText {
+            // Second tap: apply the correction.
+            replaceCurrentSentence(with: corrected)
+            pendingCorrectedText = nil
+            toolbar.reset()
+            return
+        }
+
+        let text = extractCurrentSentence()
+        guard !text.isEmpty else {
+            toolbar.showError("No text to correct.")
+            return
+        }
+
+        toolbar.showLoading()
+
+        Task {
+            do {
+                let contextRaw = AppGroupConfig.string(for: .defaultContext) ?? ContextType.general.rawValue
+                let context = ContextType(rawValue: contextRaw) ?? .general
+                let response = try await provider.correct(GrammarRequest(text: text, context: context))
+                await MainActor.run {
+                    pendingCorrectedText = response.correctedText
+                    toolbar.showPreview(response.correctedText)
+                }
+            } catch {
+                await MainActor.run {
+                    toolbar.showError(error.localizedDescription)
+                }
+            }
+        }
+    }
+}
