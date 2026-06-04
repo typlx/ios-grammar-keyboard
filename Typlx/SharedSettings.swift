@@ -1,11 +1,15 @@
 import Foundation
 import Security
 
-// Replace TEAMID with your Apple Developer Team ID (10-character string from the Member Center).
-// Both targets must list this access group in their keychain-access-groups entitlement.
-// Example: "A1B2C3D4E5.com.typlx.grammar-keyboard"
-private let keychainAccessGroup = "TEAMID.com.typlx.grammar-keyboard"
 private let keychainService = "com.typlx.grammar-keyboard"
+
+// Reads the Team ID prefix injected by Xcode at build time via Info.plist AppIdentifierPrefix key.
+// Returns nil when building without a provisioning profile (simulator/unsigned builds).
+private var keychainAccessGroup: String? {
+    guard let prefix = Bundle.main.infoDictionary?["AppIdentifierPrefix"] as? String,
+          !prefix.isEmpty, prefix != "." else { return nil }
+    return "\(prefix)com.typlx.grammar-keyboard"
+}
 
 final class SharedSettings {
     static let shared = SharedSettings()
@@ -29,26 +33,30 @@ final class SharedSettings {
     private func save(key: String, value: String) {
         guard let data = value.data(using: .utf8) else { return }
         delete(key: key)
-        let query: [String: Any] = [
+        var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: keychainService,
             kSecAttrAccount as String: key,
-            kSecAttrAccessGroup as String: keychainAccessGroup,
             kSecValueData as String: data,
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
         ]
+        if let group = keychainAccessGroup {
+            query[kSecAttrAccessGroup as String] = group
+        }
         SecItemAdd(query as CFDictionary, nil)
     }
 
     private func load(key: String) -> String? {
-        let query: [String: Any] = [
+        var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: keychainService,
             kSecAttrAccount as String: key,
-            kSecAttrAccessGroup as String: keychainAccessGroup,
             kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
+            kSecMatchLimit as String: kSecMatchLimitOne,
         ]
+        if let group = keychainAccessGroup {
+            query[kSecAttrAccessGroup as String] = group
+        }
         var result: AnyObject?
         guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
               let data = result as? Data
@@ -57,12 +65,14 @@ final class SharedSettings {
     }
 
     private func delete(key: String) {
-        let query: [String: Any] = [
+        var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: keychainService,
             kSecAttrAccount as String: key,
-            kSecAttrAccessGroup as String: keychainAccessGroup
         ]
+        if let group = keychainAccessGroup {
+            query[kSecAttrAccessGroup as String] = group
+        }
         SecItemDelete(query as CFDictionary)
     }
 }
