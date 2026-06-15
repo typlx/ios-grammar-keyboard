@@ -29,7 +29,7 @@ struct SettingsView: View {
                 }
 
                 Section("API Configuration") {
-                    TextField("API URL", text: $apiUrl)
+                    TextField("API URL (e.g. https://api.openai.com/v1)", text: $apiUrl)
                         .keyboardType(.URL)
                         .textContentType(.URL)
                         .autocapitalization(.none)

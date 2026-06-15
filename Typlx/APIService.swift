@@ -25,7 +25,16 @@ final class APIService {
     func fixGrammar(text: String) async throws -> String {
         let settings = SharedSettings.shared
         let baseURL = settings.apiURL.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-        let endpoint = baseURL.hasSuffix("/chat/completions") ? baseURL : "\(baseURL)/chat/completions"
+        let endpoint: String
+        if baseURL.hasSuffix("/chat/completions") {
+            endpoint = baseURL
+        } else if let components = URLComponents(string: baseURL),
+                  components.path.isEmpty || components.path == "/" {
+            // Bare host — standard OpenAI-compatible APIs require /v1 before the path.
+            endpoint = baseURL + "/v1/chat/completions"
+        } else {
+            endpoint = baseURL + "/chat/completions"
+        }
 
         guard let url = URL(string: endpoint) else { throw APIError.invalidURL }
 

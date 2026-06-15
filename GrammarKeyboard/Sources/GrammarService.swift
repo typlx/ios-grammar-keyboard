@@ -77,13 +77,18 @@ final class GrammarService {
     // MARK: - Request Building
 
     private static func buildRequest(text: String, config: Configuration) throws -> URLRequest {
-        // Normalize the base URL: strip trailing slash, then append the path.
-        let base = config.apiUrl.hasSuffix("/")
-            ? String(config.apiUrl.dropLast())
-            : config.apiUrl
-        let endpoint = base.hasSuffix("/chat/completions")
-            ? base
-            : base + "/chat/completions"
+        // Strip trailing slashes, then append the chat completions path.
+        // For bare hosts (no path component), standard OpenAI-compatible APIs require /v1 first.
+        let base = config.apiUrl.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        let endpoint: String
+        if base.hasSuffix("/chat/completions") {
+            endpoint = base
+        } else if let components = URLComponents(string: base),
+                  components.path.isEmpty || components.path == "/" {
+            endpoint = base + "/v1/chat/completions"
+        } else {
+            endpoint = base + "/chat/completions"
+        }
 
         guard let url = URL(string: endpoint) else {
             throw GrammarError(message: "Invalid API URL: \(endpoint)")
