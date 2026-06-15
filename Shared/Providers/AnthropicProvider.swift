@@ -33,7 +33,7 @@ public final class AnthropicProvider: GrammarProvider {
 
         let body: [String: Any] = [
             "model": config.model,
-            "system": SystemPrompts.prompt(for: request.context),
+            "system": SystemPrompts.prompt(for: request.context, language: request.language),
             "messages": [
                 ["role": "user", "content": request.text]
             ],

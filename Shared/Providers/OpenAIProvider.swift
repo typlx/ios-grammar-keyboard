@@ -30,7 +30,7 @@ public final class OpenAIProvider: GrammarProvider {
         let body: [String: Any] = [
             "model": config.model,
             "messages": [
-                ["role": "system", "content": SystemPrompts.prompt(for: request.context)],
+                ["role": "system", "content": SystemPrompts.prompt(for: request.context, language: request.language)],
                 ["role": "user", "content": request.text]
             ],
             "max_tokens": 1024,

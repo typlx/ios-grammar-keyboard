@@ -9,13 +9,35 @@ public enum ContextType: String, Codable, CaseIterable {
     case codeComment = "code_comment"
 }
 
+public enum CorrectionLanguage: String, Codable, CaseIterable {
+    case english = "en"
+    case spanish = "es"
+    case french = "fr"
+    case german = "de"
+    case portuguese = "pt"
+    case italian = "it"
+
+    public var displayName: String {
+        switch self {
+        case .english: return "English"
+        case .spanish: return "Spanish"
+        case .french: return "French"
+        case .german: return "German"
+        case .portuguese: return "Portuguese"
+        case .italian: return "Italian"
+        }
+    }
+}
+
 public struct GrammarRequest {
     public let text: String
     public let context: ContextType
+    public let language: CorrectionLanguage
 
-    public init(text: String, context: ContextType = .general) {
+    public init(text: String, context: ContextType = .general, language: CorrectionLanguage = .english) {
         self.text = text
         self.context = context
+        self.language = language
     }
 }
 

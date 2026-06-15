@@ -26,6 +26,9 @@ public extension AppGroupConfig {
         case anthropicURL = "anthropicURL"
         case processingMode = "processingMode"
         case defaultContext = "defaultContext"
+        case language = "language"
+        case autocorrectEnabled = "autocorrectEnabled"
+        case hapticFeedbackEnabled = "hapticFeedbackEnabled"
     }
 
     static func set<T>(_ value: T, for key: DefaultsKey) {
@@ -34,6 +37,11 @@ public extension AppGroupConfig {
 
     static func string(for key: DefaultsKey) -> String? {
         sharedDefaults.string(forKey: key.rawValue)
+    }
+
+    static func bool(for key: DefaultsKey, defaultValue: Bool = false) -> Bool {
+        guard sharedDefaults.object(forKey: key.rawValue) != nil else { return defaultValue }
+        return sharedDefaults.bool(forKey: key.rawValue)
     }
 
     static func providerConfig(for type: ProviderType) -> ProviderConfig {

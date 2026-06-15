@@ -63,31 +63,38 @@ final class GrammarToolbar: UIView {
         delegate?.grammarToolbarDidTapFix(self)
     }
 
-    // MARK: - State
+    // MARK: - State transitions
 
     func showLoading() {
         fixButton.isEnabled = false
-        previewLabel.text = ""
         activityIndicator.startAnimating()
+        animateLabel(text: "", color: .secondaryLabel)
     }
 
     func showPreview(_ text: String) {
         activityIndicator.stopAnimating()
-        previewLabel.text = text.isEmpty ? "" : "→ \(text.prefix(40))\(text.count > 40 ? "…" : "")"
         fixButton.isEnabled = true
+        let truncated = text.isEmpty ? "" : "→ \(text.prefix(40))\(text.count > 40 ? "…" : "")"
+        animateLabel(text: truncated, color: .secondaryLabel)
     }
 
     func showError(_ message: String) {
         activityIndicator.stopAnimating()
-        previewLabel.text = message
-        previewLabel.textColor = .systemRed
         fixButton.isEnabled = true
+        animateLabel(text: message, color: .systemRed)
     }
 
     func reset() {
         activityIndicator.stopAnimating()
-        previewLabel.text = ""
-        previewLabel.textColor = .secondaryLabel
         fixButton.isEnabled = true
+        animateLabel(text: "", color: .secondaryLabel)
+    }
+
+    // Crossfade the preview label so state changes feel smooth.
+    private func animateLabel(text: String, color: UIColor) {
+        UIView.transition(with: previewLabel, duration: 0.2, options: [.transitionCrossDissolve, .allowUserInteraction]) {
+            self.previewLabel.text = text
+            self.previewLabel.textColor = color
+        }
     }
 }

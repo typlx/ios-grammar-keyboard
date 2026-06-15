@@ -3,15 +3,39 @@ import UIKit
 final class KeyboardViewController: UIInputViewController {
 
     private let grammarToolbar = GrammarToolbar()
+    private var toolbarHeightConstraint: NSLayoutConstraint!
     private var keyboardView: UIView?
     private var currentProvider: (any GrammarProvider)?
     private var pendingCorrectedText: String?
-
-    // Tracks the last text seen from the proxy to detect changes.
     private var lastSeenText: String = ""
+
+    private let keyImpact = UIImpactFeedbackGenerator(style: .light)
+    private let correctionImpact = UIImpactFeedbackGenerator(style: .medium)
+
+    // MARK: - Keyboard background and key colors (dark-mode adaptive)
+
+    private static let keyboardBackground = UIColor { tc in
+        tc.userInterfaceStyle == .dark
+            ? UIColor(white: 0.17, alpha: 1)
+            : UIColor(white: 0.82, alpha: 1)
+    }
+
+    private static let keyBackground = UIColor { tc in
+        tc.userInterfaceStyle == .dark
+            ? UIColor(white: 0.37, alpha: 1)
+            : UIColor.white
+    }
+
+    private static let specialKeyBackground = UIColor { tc in
+        tc.userInterfaceStyle == .dark
+            ? UIColor(white: 0.27, alpha: 1)
+            : UIColor(white: 0.68, alpha: 1)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        keyImpact.prepare()
+        correctionImpact.prepare()
         configureProvider()
         setupToolbar()
         setupKeyboard()
@@ -27,6 +51,11 @@ final class KeyboardViewController: UIInputViewController {
     private func configureProvider() {
         let config = AppGroupConfig.activeProviderConfig()
         currentProvider = ProviderRegistry.shared.makeProvider(config: config)
+
+        // Show/hide grammar toolbar based on the autocorrect setting (default: enabled).
+        let enabled = AppGroupConfig.bool(for: .autocorrectEnabled, defaultValue: true)
+        grammarToolbar.isHidden = !enabled
+        toolbarHeightConstraint?.constant = enabled ? 44 : 0
     }
 
     // MARK: - Layout
@@ -35,17 +64,16 @@ final class KeyboardViewController: UIInputViewController {
         grammarToolbar.delegate = self
         grammarToolbar.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(grammarToolbar)
+        toolbarHeightConstraint = grammarToolbar.heightAnchor.constraint(equalToConstant: 44)
         NSLayoutConstraint.activate([
             grammarToolbar.topAnchor.constraint(equalTo: view.topAnchor),
             grammarToolbar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             grammarToolbar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            grammarToolbar.heightAnchor.constraint(equalToConstant: 44)
+            toolbarHeightConstraint
         ])
     }
 
     private func setupKeyboard() {
-        // Build a simple standard QWERTY-style keyboard using UIButtons.
-        // In a production build this would be replaced with a full custom keyboard layout.
         let keyboard = buildQWERTYView()
         keyboard.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(keyboard)
@@ -64,40 +92,31 @@ final class KeyboardViewController: UIInputViewController {
             ["a","s","d","f","g","h","j","k","l"],
             ["z","x","c","v","b","n","m"],
         ]
+
         let container = UIView()
-        container.backgroundColor = UIColor(white: 0.82, alpha: 1)
+        container.backgroundColor = Self.keyboardBackground
 
-        var previousRow: UIView?
-        for (_, row) in rows.enumerated() {
-            let rowView = buildKeyRow(keys: row)
-            rowView.translatesAutoresizingMaskIntoConstraints = false
-            container.addSubview(rowView)
-            NSLayoutConstraint.activate([
-                rowView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 4),
-                rowView.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -4),
-                rowView.heightAnchor.constraint(equalToConstant: 42)
-            ])
-            if let prev = previousRow {
-                rowView.topAnchor.constraint(equalTo: prev.bottomAnchor, constant: 4).isActive = true
-            } else {
-                rowView.topAnchor.constraint(equalTo: container.topAnchor, constant: 4).isActive = true
-            }
-            previousRow = rowView
-        }
+        // Use a vertical stack with fillEqually so rows adapt to any keyboard height.
+        let outerStack = UIStackView()
+        outerStack.axis = .vertical
+        outerStack.distribution = .fillEqually
+        outerStack.spacing = 4
+        outerStack.layoutMargins = UIEdgeInsets(top: 6, left: 4, bottom: 6, right: 4)
+        outerStack.isLayoutMarginsRelativeArrangement = true
+        outerStack.translatesAutoresizingMaskIntoConstraints = false
 
-        // Bottom row: space + delete + return
-        let bottomRow = buildBottomRow()
-        bottomRow.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(bottomRow)
-        if let prev = previousRow {
-            NSLayoutConstraint.activate([
-                bottomRow.topAnchor.constraint(equalTo: prev.bottomAnchor, constant: 4),
-                bottomRow.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 4),
-                bottomRow.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -4),
-                bottomRow.heightAnchor.constraint(equalToConstant: 42),
-                bottomRow.bottomAnchor.constraint(lessThanOrEqualTo: container.bottomAnchor, constant: -4)
-            ])
+        for row in rows {
+            outerStack.addArrangedSubview(buildKeyRow(keys: row))
         }
+        outerStack.addArrangedSubview(buildBottomRow())
+
+        container.addSubview(outerStack)
+        NSLayoutConstraint.activate([
+            outerStack.topAnchor.constraint(equalTo: container.topAnchor),
+            outerStack.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            outerStack.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            outerStack.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+        ])
 
         return container
     }
@@ -108,7 +127,7 @@ final class KeyboardViewController: UIInputViewController {
         stack.distribution = .fillEqually
         stack.spacing = 4
         for key in keys {
-            let btn = makeKeyButton(title: key)
+            let btn = makeKeyButton(title: key, isSpecial: false)
             btn.addTarget(self, action: #selector(keyTapped(_:)), for: .touchUpInside)
             btn.accessibilityLabel = key
             stack.addArrangedSubview(btn)
@@ -121,15 +140,15 @@ final class KeyboardViewController: UIInputViewController {
         stack.axis = .horizontal
         stack.spacing = 4
 
-        let spaceBtn = makeKeyButton(title: "space")
+        let spaceBtn = makeKeyButton(title: "space", isSpecial: false)
         spaceBtn.tag = 1
         spaceBtn.addTarget(self, action: #selector(spaceTapped), for: .touchUpInside)
 
-        let deleteBtn = makeKeyButton(title: "⌫")
+        let deleteBtn = makeKeyButton(title: "⌫", isSpecial: true)
         deleteBtn.tag = 2
         deleteBtn.addTarget(self, action: #selector(deleteTapped), for: .touchUpInside)
 
-        let returnBtn = makeKeyButton(title: "return")
+        let returnBtn = makeKeyButton(title: "return", isSpecial: true)
         returnBtn.tag = 3
         returnBtn.addTarget(self, action: #selector(returnTapped), for: .touchUpInside)
 
@@ -143,11 +162,11 @@ final class KeyboardViewController: UIInputViewController {
         return stack
     }
 
-    private func makeKeyButton(title: String) -> UIButton {
-        let btn = UIButton(type: .system)
+    private func makeKeyButton(title: String, isSpecial: Bool) -> UIButton {
+        let btn = UIButton(type: .custom)
         btn.setTitle(title, for: .normal)
-        btn.backgroundColor = .white
-        btn.setTitleColor(.black, for: .normal)
+        btn.backgroundColor = isSpecial ? Self.specialKeyBackground : Self.keyBackground
+        btn.setTitleColor(.label, for: .normal)
         btn.titleLabel?.font = .systemFont(ofSize: 17)
         btn.layer.cornerRadius = 5
         btn.layer.shadowColor = UIColor.black.cgColor
@@ -161,19 +180,36 @@ final class KeyboardViewController: UIInputViewController {
 
     @objc private func keyTapped(_ sender: UIButton) {
         guard let title = sender.currentTitle else { return }
+        triggerKeyHaptic()
         textDocumentProxy.insertText(title)
+        pendingCorrectedText = nil
+        grammarToolbar.reset()
     }
 
     @objc private func spaceTapped() {
+        triggerKeyHaptic()
         textDocumentProxy.insertText(" ")
+        pendingCorrectedText = nil
+        grammarToolbar.reset()
     }
 
     @objc private func deleteTapped() {
+        triggerKeyHaptic()
         textDocumentProxy.deleteBackward()
+        pendingCorrectedText = nil
+        grammarToolbar.reset()
     }
 
     @objc private func returnTapped() {
+        triggerKeyHaptic()
         textDocumentProxy.insertText("\n")
+        pendingCorrectedText = nil
+        grammarToolbar.reset()
+    }
+
+    private func triggerKeyHaptic() {
+        guard AppGroupConfig.bool(for: .hapticFeedbackEnabled, defaultValue: true) else { return }
+        keyImpact.impactOccurred()
     }
 
     // MARK: - Text Document Proxy Helpers
@@ -182,7 +218,6 @@ final class KeyboardViewController: UIInputViewController {
         let before = textDocumentProxy.documentContextBeforeInput ?? ""
         let after = textDocumentProxy.documentContextAfterInput ?? ""
         let full = before + after
-        // Extract the last sentence/paragraph as the correction target.
         if let range = before.range(of: ".", options: .backwards) {
             let start = before.index(after: range.lowerBound)
             return String(before[start...] + after).trimmingCharacters(in: .whitespaces)
@@ -194,11 +229,9 @@ final class KeyboardViewController: UIInputViewController {
         let before = textDocumentProxy.documentContextBeforeInput ?? ""
         let after = textDocumentProxy.documentContextAfterInput ?? ""
 
-        // Move to end of current sentence.
         if !after.isEmpty {
             textDocumentProxy.adjustTextPosition(byCharacterOffset: after.count)
         }
-        // Delete before+after characters.
         let totalChars = before.count + after.count
         for _ in 0..<totalChars {
             textDocumentProxy.deleteBackward()
@@ -225,6 +258,9 @@ extension KeyboardViewController: GrammarToolbarDelegate {
             replaceCurrentSentence(with: corrected)
             pendingCorrectedText = nil
             toolbar.reset()
+            if AppGroupConfig.bool(for: .hapticFeedbackEnabled, defaultValue: true) {
+                correctionImpact.impactOccurred()
+            }
             return
         }
 
@@ -240,16 +276,41 @@ extension KeyboardViewController: GrammarToolbarDelegate {
             do {
                 let contextRaw = AppGroupConfig.string(for: .defaultContext) ?? ContextType.general.rawValue
                 let context = ContextType(rawValue: contextRaw) ?? .general
-                let response = try await provider.correct(GrammarRequest(text: text, context: context))
+                let languageRaw = AppGroupConfig.string(for: .language) ?? CorrectionLanguage.english.rawValue
+                let language = CorrectionLanguage(rawValue: languageRaw) ?? .english
+                let request = GrammarRequest(text: text, context: context, language: language)
+                let response = try await provider.correct(request)
                 await MainActor.run {
                     pendingCorrectedText = response.correctedText
                     toolbar.showPreview(response.correctedText)
                 }
+            } catch let error as GrammarProviderError {
+                await MainActor.run {
+                    toolbar.showError(gracefulMessage(for: error))
+                }
             } catch {
                 await MainActor.run {
-                    toolbar.showError(error.localizedDescription)
+                    toolbar.showError("Correction unavailable. Try again later.")
                 }
             }
+        }
+    }
+
+    // User-facing messages that degrade gracefully for each failure mode.
+    private func gracefulMessage(for error: GrammarProviderError) -> String {
+        switch error {
+        case .networkUnavailable:
+            return "Offline — check your connection."
+        case .unauthorized:
+            return "Invalid API key. Check Settings."
+        case .rateLimited:
+            return "Rate limit hit — try again shortly."
+        case .serverError(_, _):
+            return "Service unavailable. Try again later."
+        case .invalidResponse:
+            return "Unexpected response. Try again."
+        case .noFullAccess:
+            return "Enable Full Access in Settings → General → Keyboard."
         }
     }
 }

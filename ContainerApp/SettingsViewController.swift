@@ -3,7 +3,7 @@ import UIKit
 final class SettingsViewController: UITableViewController {
 
     private enum Section: Int, CaseIterable {
-        case provider, apiKey, model, apiURL, context, about
+        case provider, apiKey, model, apiURL, context, behavior, about
     }
 
     private var selectedProvider: ProviderType = .openAI
@@ -14,6 +14,9 @@ final class SettingsViewController: UITableViewController {
     private var openAIURL = ""
     private var anthropicURL = ""
     private var selectedContext: ContextType = .general
+    private var selectedLanguage: CorrectionLanguage = .english
+    private var autocorrectEnabled: Bool = true
+    private var hapticFeedbackEnabled: Bool = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,6 +42,10 @@ final class SettingsViewController: UITableViewController {
         anthropicURL = defaults.string(forKey: AppGroupConfig.DefaultsKey.anthropicURL.rawValue) ?? ProviderConfig.defaultAnthropic.apiURL
         let contextRaw = defaults.string(forKey: AppGroupConfig.DefaultsKey.defaultContext.rawValue) ?? ContextType.general.rawValue
         selectedContext = ContextType(rawValue: contextRaw) ?? .general
+        let languageRaw = defaults.string(forKey: AppGroupConfig.DefaultsKey.language.rawValue) ?? CorrectionLanguage.english.rawValue
+        selectedLanguage = CorrectionLanguage(rawValue: languageRaw) ?? .english
+        autocorrectEnabled = AppGroupConfig.bool(for: .autocorrectEnabled, defaultValue: true)
+        hapticFeedbackEnabled = AppGroupConfig.bool(for: .hapticFeedbackEnabled, defaultValue: true)
     }
 
     @objc private func save() {
@@ -49,6 +56,9 @@ final class SettingsViewController: UITableViewController {
         defaults.set(openAIURL, forKey: AppGroupConfig.DefaultsKey.openAIURL.rawValue)
         defaults.set(anthropicURL, forKey: AppGroupConfig.DefaultsKey.anthropicURL.rawValue)
         defaults.set(selectedContext.rawValue, forKey: AppGroupConfig.DefaultsKey.defaultContext.rawValue)
+        defaults.set(selectedLanguage.rawValue, forKey: AppGroupConfig.DefaultsKey.language.rawValue)
+        defaults.set(autocorrectEnabled, forKey: AppGroupConfig.DefaultsKey.autocorrectEnabled.rawValue)
+        defaults.set(hapticFeedbackEnabled, forKey: AppGroupConfig.DefaultsKey.hapticFeedbackEnabled.rawValue)
 
         do {
             if !openAIKey.isEmpty { try KeychainManager.shared.saveAPIKey(openAIKey, slot: .openAI) }
@@ -74,6 +84,7 @@ final class SettingsViewController: UITableViewController {
         case .model: return 2
         case .apiURL: return 2
         case .context: return ContextType.allCases.count
+        case .behavior: return 3
         case .about: return 2
         }
     }
@@ -85,6 +96,7 @@ final class SettingsViewController: UITableViewController {
         case .model: return "Models"
         case .apiURL: return "API URLs"
         case .context: return "Default Context"
+        case .behavior: return "Keyboard Behavior"
         case .about: return "About"
         }
     }
@@ -138,6 +150,24 @@ final class SettingsViewController: UITableViewController {
             cell.accessoryType = ctx == selectedContext ? .checkmark : .none
             return cell
 
+        case .behavior:
+            switch indexPath.row {
+            case 0:
+                let cell = UITableViewCell(style: .value1, reuseIdentifier: "language")
+                cell.textLabel?.text = "Language"
+                cell.detailTextLabel?.text = selectedLanguage.displayName
+                cell.accessoryType = .disclosureIndicator
+                return cell
+            case 1:
+                return switchCell(label: "Grammar Correction", isOn: autocorrectEnabled) { [weak self] isOn in
+                    self?.autocorrectEnabled = isOn
+                }
+            default:
+                return switchCell(label: "Haptic Feedback", isOn: hapticFeedbackEnabled) { [weak self] isOn in
+                    self?.hapticFeedbackEnabled = isOn
+                }
+            }
+
         case .about:
             let cell = UITableViewCell(style: .value1, reuseIdentifier: "about")
             cell.selectionStyle = .none
@@ -164,8 +194,32 @@ final class SettingsViewController: UITableViewController {
         case .context:
             selectedContext = ContextType.allCases[indexPath.row]
             tableView.reloadSections([Section.context.rawValue], with: .none)
+        case .behavior:
+            if indexPath.row == 0 { showLanguagePicker() }
         case .about, .apiKey, .model, .apiURL: break
         }
+    }
+
+    // MARK: - Language Picker
+
+    private func showLanguagePicker() {
+        let alert = UIAlertController(title: "Correction Language", message: nil, preferredStyle: .actionSheet)
+        for lang in CorrectionLanguage.allCases {
+            let action = UIAlertAction(title: lang.displayName, style: .default) { [weak self] _ in
+                self?.selectedLanguage = lang
+                self?.tableView.reloadSections([Section.behavior.rawValue], with: .none)
+            }
+            if lang == selectedLanguage {
+                action.setValue(true, forKey: "checked")
+            }
+            alert.addAction(action)
+        }
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        if let popover = alert.popoverPresentationController {
+            popover.sourceView = tableView
+            popover.sourceRect = tableView.rectForRow(at: IndexPath(row: 0, section: Section.behavior.rawValue))
+        }
+        present(alert, animated: true)
     }
 
     // MARK: - Helpers
@@ -194,6 +248,17 @@ final class SettingsViewController: UITableViewController {
             tf.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.5)
         ])
         tf.addAction(UIAction { _ in onChange(tf.text ?? "") }, for: .editingChanged)
+        return cell
+    }
+
+    private func switchCell(label: String, isOn: Bool, onChange: @escaping (Bool) -> Void) -> UITableViewCell {
+        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+        cell.textLabel?.text = label
+        cell.selectionStyle = .none
+        let toggle = UISwitch()
+        toggle.isOn = isOn
+        toggle.addAction(UIAction { _ in onChange(toggle.isOn) }, for: .valueChanged)
+        cell.accessoryView = toggle
         return cell
     }
 
