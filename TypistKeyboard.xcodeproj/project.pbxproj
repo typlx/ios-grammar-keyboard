@@ -548,7 +548,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.typist.keyboard;
+				PRODUCT_BUNDLE_IDENTIFIER = com.typlx.keyboard;
 				PRODUCT_NAME = TypistKeyboard;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -569,7 +569,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.typist.keyboard;
+				PRODUCT_BUNDLE_IDENTIFIER = com.typlx.keyboard;
 				PRODUCT_NAME = TypistKeyboard;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -589,7 +589,7 @@
 					"$(inherited)",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.typist.keyboard.extension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.typlx.keyboard.extension;
 				PRODUCT_NAME = KeyboardExtension;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -610,7 +610,7 @@
 					"$(inherited)",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.typist.keyboard.extension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.typlx.keyboard.extension;
 				PRODUCT_NAME = KeyboardExtension;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -627,7 +627,7 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.typist.keyboard.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.typlx.keyboard.tests;
 				PRODUCT_NAME = TypistKeyboardTests;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -644,7 +644,7 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.typist.keyboard.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.typlx.keyboard.tests;
 				PRODUCT_NAME = TypistKeyboardTests;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;

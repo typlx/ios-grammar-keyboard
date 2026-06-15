@@ -48,7 +48,7 @@ jobs:
       - name: Install provisioning profiles
         uses: apple-actions/download-provisioning-profiles@v2
         with:
-          bundle-id: "com.typist.keyboard*"
+          bundle-id: "com.typlx.keyboard*"
           issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           api-key-id: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           api-private-key: ${{ secrets.APP_STORE_CONNECT_KEY_CONTENT }}

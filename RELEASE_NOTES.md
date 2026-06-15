@@ -20,6 +20,6 @@ Initial App Store release.
 
 - iOS 15+ deployment target (iPhone and iPad)
 - Swift 5, UIKit, no third-party dependencies
-- App Group (`group.com.typist.keyboard`) for shared settings between container app and keyboard extension
+- App Group (`group.com.typlx.keyboard`) for shared settings between container app and keyboard extension
 - 15-second request timeout on all provider calls
 - Graceful error messages for: no network, invalid API key, rate limit, server error, and empty text

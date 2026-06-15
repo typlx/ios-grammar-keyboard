@@ -62,7 +62,7 @@ public final class KeychainManager {
     private func baseQuery(for key: String) -> [String: Any] {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: "com.typist.keyboard",
+            kSecAttrService as String: "com.typlx.keyboard",
             kSecAttrAccount as String: key
         ]
         if !accessGroup.isEmpty {

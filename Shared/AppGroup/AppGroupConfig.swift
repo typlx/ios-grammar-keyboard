@@ -4,10 +4,10 @@ import Foundation
 /// Both the container app and the keyboard extension must reference the same group IDs.
 public enum AppGroupConfig {
     /// App Group identifier registered in both targets' entitlements.
-    public static let groupIdentifier = "group.com.typist.keyboard"
+    public static let groupIdentifier = "group.com.typlx.keyboard"
 
     /// Keychain access group shared between the container app and keyboard extension.
-    public static let keychainAccessGroup = "com.typist.keyboard.shared"
+    public static let keychainAccessGroup = "com.typlx.keyboard.shared"
 
     /// Shared UserDefaults suite backed by the App Group container.
     public static var sharedDefaults: UserDefaults {
