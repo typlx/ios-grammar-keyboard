@@ -25,7 +25,7 @@ public final class AnthropicProvider: GrammarProvider {
         guard !config.apiKey.isEmpty else { throw GrammarProviderError.unauthorized }
 
         let url = URL(string: config.apiURL)!
-        var urlRequest = URLRequest(url: url)
+        var urlRequest = URLRequest(url: url, timeoutInterval: 15)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue(config.apiKey, forHTTPHeaderField: "x-api-key")
@@ -42,7 +42,20 @@ public final class AnthropicProvider: GrammarProvider {
 
         urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-        let (data, response) = try await session.data(for: urlRequest)
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await session.data(for: urlRequest)
+        } catch let urlError as URLError {
+            switch urlError.code {
+            case .notConnectedToInternet, .networkConnectionLost, .cannotConnectToHost, .cannotFindHost:
+                throw GrammarProviderError.networkUnavailable
+            case .timedOut:
+                throw GrammarProviderError.serverError(0, "Request timed out. Try again.")
+            default:
+                throw GrammarProviderError.networkUnavailable
+            }
+        }
         try validate(httpResponse: response, data: data)
 
         let decoded = try JSONDecoder().decode(AnthropicMessagesResponse.self, from: data)

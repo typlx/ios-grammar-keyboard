@@ -35,6 +35,7 @@
 		220000000000000000000203 /* OpenAIProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000012 /* OpenAIProviderTests.swift */; };
 		220000000000000000000204 /* ProviderRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000013 /* ProviderRegistryTests.swift */; };
 		220000000000000000000300 /* KeyboardExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 110000000000000000000017 /* KeyboardExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		220000000000000000000400 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001B /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +96,7 @@
 		110000000000000000000018 /* TypistKeyboardTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TypistKeyboardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		110000000000000000000019 /* TypistKeyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TypistKeyboard.entitlements; sourceTree = "<group>"; };
 		11000000000000000000001A /* KeyboardExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeyboardExtension.entitlements; sourceTree = "<group>"; };
+		11000000000000000000001B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +154,7 @@
 				110000000000000000000004 /* SettingsViewController.swift */,
 				110000000000000000000014 /* Info.plist */,
 				110000000000000000000019 /* TypistKeyboard.entitlements */,
+				11000000000000000000001B /* Assets.xcassets */,
 			);
 			path = ContainerApp;
 			sourceTree = "<group>";
@@ -322,6 +325,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				220000000000000000000400 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -523,6 +527,7 @@
 		770000000000000000000003 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ContainerApp/TypistKeyboard.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
@@ -543,6 +548,7 @@
 		770000000000000000000004 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ContainerApp/TypistKeyboard.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";

@@ -3,7 +3,7 @@ import UIKit
 final class SettingsViewController: UITableViewController {
 
     private enum Section: Int, CaseIterable {
-        case provider, apiKey, model, apiURL, context
+        case provider, apiKey, model, apiURL, context, about
     }
 
     private var selectedProvider: ProviderType = .openAI
@@ -74,6 +74,7 @@ final class SettingsViewController: UITableViewController {
         case .model: return 2
         case .apiURL: return 2
         case .context: return ContextType.allCases.count
+        case .about: return 2
         }
     }
 
@@ -84,6 +85,7 @@ final class SettingsViewController: UITableViewController {
         case .model: return "Models"
         case .apiURL: return "API URLs"
         case .context: return "Default Context"
+        case .about: return "About"
         }
     }
 
@@ -135,6 +137,21 @@ final class SettingsViewController: UITableViewController {
             cell.textLabel?.text = ctx.rawValue.replacingOccurrences(of: "_", with: " ").capitalized
             cell.accessoryType = ctx == selectedContext ? .checkmark : .none
             return cell
+
+        case .about:
+            let cell = UITableViewCell(style: .value1, reuseIdentifier: "about")
+            cell.selectionStyle = .none
+            switch indexPath.row {
+            case 0:
+                cell.textLabel?.text = "Version"
+                let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
+                let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "—"
+                cell.detailTextLabel?.text = "\(version) (\(build))"
+            default:
+                cell.textLabel?.text = "Privacy"
+                cell.detailTextLabel?.text = "Text never stored or logged"
+            }
+            return cell
         }
     }
 
@@ -147,7 +164,7 @@ final class SettingsViewController: UITableViewController {
         case .context:
             selectedContext = ContextType.allCases[indexPath.row]
             tableView.reloadSections([Section.context.rawValue], with: .none)
-        default: break
+        case .about, .apiKey, .model, .apiURL: break
         }
     }
 
