@@ -37,6 +37,11 @@
 		220000000000000000000205 /* FeatureGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000020 /* FeatureGateTests.swift */; };
 		220000000000000000000206 /* PurchaseManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000021 /* PurchaseManagerTests.swift */; };
 		220000000000000000000207 /* AuthRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000022 /* AuthRepositoryTests.swift */; };
+		220000000000000000000208 /* GrammarToolbarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000023 /* GrammarToolbarTests.swift */; };
+		220000000000000000000209 /* GrammarProviderErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000024 /* GrammarProviderErrorTests.swift */; };
+		22000000000000000000020A /* SystemPromptsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000025 /* SystemPromptsTests.swift */; };
+		22000000000000000000020B /* KeychainManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000026 /* KeychainManagerTests.swift */; };
+		22000000000000000000020C /* AppGroupConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000027 /* AppGroupConfigTests.swift */; };
 		220000000000000000000020 /* FeatureGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001C /* FeatureGate.swift */; };
 		220000000000000000000021 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001D /* PurchaseManager.swift */; };
 		220000000000000000000022 /* RevenueCatConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001E /* RevenueCatConfig.swift */; };
@@ -114,6 +119,11 @@
 		110000000000000000000020 /* FeatureGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureGateTests.swift; sourceTree = "<group>"; };
 		110000000000000000000021 /* PurchaseManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManagerTests.swift; sourceTree = "<group>"; };
 		110000000000000000000022 /* AuthRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepositoryTests.swift; sourceTree = "<group>"; };
+		110000000000000000000023 /* GrammarToolbarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrammarToolbarTests.swift; sourceTree = "<group>"; };
+		110000000000000000000024 /* GrammarProviderErrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrammarProviderErrorTests.swift; sourceTree = "<group>"; };
+		110000000000000000000025 /* SystemPromptsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemPromptsTests.swift; sourceTree = "<group>"; };
+		110000000000000000000026 /* KeychainManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManagerTests.swift; sourceTree = "<group>"; };
+		110000000000000000000027 /* AppGroupConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroupConfigTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,6 +269,11 @@
 				110000000000000000000020 /* FeatureGateTests.swift */,
 				110000000000000000000021 /* PurchaseManagerTests.swift */,
 				110000000000000000000022 /* AuthRepositoryTests.swift */,
+				110000000000000000000023 /* GrammarToolbarTests.swift */,
+				110000000000000000000024 /* GrammarProviderErrorTests.swift */,
+				110000000000000000000025 /* SystemPromptsTests.swift */,
+				110000000000000000000026 /* KeychainManagerTests.swift */,
+				110000000000000000000027 /* AppGroupConfigTests.swift */,
 			);
 			path = TypistKeyboardTests;
 			sourceTree = "<group>";
@@ -450,6 +465,11 @@
 				220000000000000000000205 /* FeatureGateTests.swift in Sources */,
 				220000000000000000000206 /* PurchaseManagerTests.swift in Sources */,
 				220000000000000000000207 /* AuthRepositoryTests.swift in Sources */,
+				220000000000000000000208 /* GrammarToolbarTests.swift in Sources */,
+				220000000000000000000209 /* GrammarProviderErrorTests.swift in Sources */,
+				22000000000000000000020A /* SystemPromptsTests.swift in Sources */,
+				22000000000000000000020B /* KeychainManagerTests.swift in Sources */,
+				22000000000000000000020C /* AppGroupConfigTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

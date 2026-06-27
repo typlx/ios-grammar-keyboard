@@ -58,7 +58,12 @@ public final class AnthropicProvider: GrammarProvider {
         }
         try validate(httpResponse: response, data: data)
 
-        let decoded = try JSONDecoder().decode(AnthropicMessagesResponse.self, from: data)
+        let decoded: AnthropicMessagesResponse
+        do {
+            decoded = try JSONDecoder().decode(AnthropicMessagesResponse.self, from: data)
+        } catch {
+            throw GrammarProviderError.invalidResponse
+        }
         guard let textBlock = decoded.content.first(where: { $0.type == "text" }) else {
             throw GrammarProviderError.invalidResponse
         }

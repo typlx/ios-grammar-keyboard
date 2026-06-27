@@ -55,7 +55,12 @@ public final class OpenAIProvider: GrammarProvider {
         }
         try validate(httpResponse: response, data: data)
 
-        let decoded = try JSONDecoder().decode(OpenAIChatResponse.self, from: data)
+        let decoded: OpenAIChatResponse
+        do {
+            decoded = try JSONDecoder().decode(OpenAIChatResponse.self, from: data)
+        } catch {
+            throw GrammarProviderError.invalidResponse
+        }
         guard let content = decoded.choices.first?.message.content else {
             throw GrammarProviderError.invalidResponse
         }
