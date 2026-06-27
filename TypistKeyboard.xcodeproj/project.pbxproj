@@ -34,6 +34,14 @@
 		220000000000000000000202 /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000011 /* MockURLProtocol.swift */; };
 		220000000000000000000203 /* OpenAIProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000012 /* OpenAIProviderTests.swift */; };
 		220000000000000000000204 /* ProviderRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000013 /* ProviderRegistryTests.swift */; };
+		220000000000000000000205 /* FeatureGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000020 /* FeatureGateTests.swift */; };
+		220000000000000000000206 /* PurchaseManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000021 /* PurchaseManagerTests.swift */; };
+		220000000000000000000207 /* AuthRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000022 /* AuthRepositoryTests.swift */; };
+		220000000000000000000020 /* FeatureGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001C /* FeatureGate.swift */; };
+		220000000000000000000021 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001D /* PurchaseManager.swift */; };
+		220000000000000000000022 /* RevenueCatConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001E /* RevenueCatConfig.swift */; };
+		220000000000000000000023 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001F /* AuthRepository.swift */; };
+		220000000000000000000120 /* FeatureGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001C /* FeatureGate.swift */; };
 		220000000000000000000300 /* KeyboardExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 110000000000000000000017 /* KeyboardExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		220000000000000000000400 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001B /* Assets.xcassets */; };
 		FIREBASE0000000000000004 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = FIREBASE0000000000000002 /* FirebaseCore */; };
@@ -99,6 +107,13 @@
 		110000000000000000000019 /* TypistKeyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TypistKeyboard.entitlements; sourceTree = "<group>"; };
 		11000000000000000000001A /* KeyboardExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeyboardExtension.entitlements; sourceTree = "<group>"; };
 		11000000000000000000001B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		11000000000000000000001C /* FeatureGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureGate.swift; sourceTree = "<group>"; };
+		11000000000000000000001D /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
+		11000000000000000000001E /* RevenueCatConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevenueCatConfig.swift; sourceTree = "<group>"; };
+		11000000000000000000001F /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
+		110000000000000000000020 /* FeatureGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureGateTests.swift; sourceTree = "<group>"; };
+		110000000000000000000021 /* PurchaseManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManagerTests.swift; sourceTree = "<group>"; };
+		110000000000000000000022 /* AuthRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepositoryTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,8 +195,28 @@
 				330000000000000000000006 /* AppGroup */,
 				330000000000000000000007 /* Keychain */,
 				330000000000000000000008 /* Providers */,
+				330000000000000000000010 /* Monetization */,
+				330000000000000000000011 /* Auth */,
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		330000000000000000000010 /* Monetization */ = {
+			isa = PBXGroup;
+			children = (
+				11000000000000000000001C /* FeatureGate.swift */,
+				11000000000000000000001D /* PurchaseManager.swift */,
+				11000000000000000000001E /* RevenueCatConfig.swift */,
+			);
+			path = Monetization;
+			sourceTree = "<group>";
+		};
+		330000000000000000000011 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				11000000000000000000001F /* AuthRepository.swift */,
+			);
+			path = Auth;
 			sourceTree = "<group>";
 		};
 		330000000000000000000006 /* AppGroup */ = {
@@ -221,6 +256,9 @@
 				110000000000000000000011 /* MockURLProtocol.swift */,
 				110000000000000000000012 /* OpenAIProviderTests.swift */,
 				110000000000000000000013 /* ProviderRegistryTests.swift */,
+				110000000000000000000020 /* FeatureGateTests.swift */,
+				110000000000000000000021 /* PurchaseManagerTests.swift */,
+				110000000000000000000022 /* AuthRepositoryTests.swift */,
 			);
 			path = TypistKeyboardTests;
 			sourceTree = "<group>";
@@ -246,6 +284,7 @@
 			packageProductDependencies = (
 				FIREBASE0000000000000002 /* FirebaseCore */,
 				FIREBASE0000000000000003 /* FirebaseAnalytics */,
+				REVENUECAT000000000000002 /* RevenueCat */,
 			);
 			productName = TypistKeyboard;
 			productReference = 110000000000000000000016 /* TypistKeyboard.app */;
@@ -320,6 +359,7 @@
 			productRefGroup = 330000000000000000000002 /* Products */;
 			packageReferences = (
 				FIREBASE0000000000000001 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				REVENUECAT000000000000001 /* XCRemoteSwiftPackageReference "purchases-ios" */,
 			);
 			projectDirPath = "";
 			projectRoot = "";
@@ -373,6 +413,10 @@
 				22000000000000000000000A /* OpenAIProvider.swift in Sources */,
 				22000000000000000000000B /* ProviderRegistry.swift in Sources */,
 				22000000000000000000000C /* SystemPrompts.swift in Sources */,
+				220000000000000000000020 /* FeatureGate.swift in Sources */,
+				220000000000000000000021 /* PurchaseManager.swift in Sources */,
+				220000000000000000000022 /* RevenueCatConfig.swift in Sources */,
+				220000000000000000000023 /* AuthRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,6 +434,7 @@
 				220000000000000000000107 /* OpenAIProvider.swift in Sources */,
 				220000000000000000000108 /* ProviderRegistry.swift in Sources */,
 				220000000000000000000109 /* SystemPrompts.swift in Sources */,
+				220000000000000000000120 /* FeatureGate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -402,6 +447,9 @@
 				220000000000000000000202 /* MockURLProtocol.swift in Sources */,
 				220000000000000000000203 /* OpenAIProviderTests.swift in Sources */,
 				220000000000000000000204 /* ProviderRegistryTests.swift in Sources */,
+				220000000000000000000205 /* FeatureGateTests.swift in Sources */,
+				220000000000000000000206 /* PurchaseManagerTests.swift in Sources */,
+				220000000000000000000207 /* AuthRepositoryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -703,6 +751,14 @@
 				minimumVersion = 10.0.0;
 			};
 		};
+		REVENUECAT000000000000001 /* XCRemoteSwiftPackageReference "purchases-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -715,6 +771,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FIREBASE0000000000000001 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
+		};
+		REVENUECAT000000000000002 /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = REVENUECAT000000000000001 /* XCRemoteSwiftPackageReference "purchases-ios" */;
+			productName = RevenueCat;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -248,6 +248,10 @@ extension KeyboardViewController: GrammarToolbarDelegate {
             toolbar.showError("Enable Full Access in Settings → General → Keyboard.")
             return
         }
+        guard FeatureGate.shared.isEnabled(.advancedGrammar) else {
+            toolbar.showError("Upgrade to Premium to unlock advanced grammar correction.")
+            return
+        }
         guard let provider = currentProvider else {
             toolbar.showError("No provider configured.")
             return
