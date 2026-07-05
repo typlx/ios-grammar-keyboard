@@ -46,6 +46,11 @@ final class KeyboardViewController: UIInputViewController {
         configureProvider()
     }
 
+    override func textDidChange(_ textInput: (any UITextInput)?) {
+        super.textDidChange(textInput)
+        grammarToolbar.isSecureEntryActive = textDocumentProxy.isSecureTextEntry
+    }
+
     // MARK: - Provider
 
     private func configureProvider() {
@@ -56,6 +61,8 @@ final class KeyboardViewController: UIInputViewController {
         let enabled = AppGroupConfig.bool(for: .autocorrectEnabled, defaultValue: true)
         grammarToolbar.isHidden = !enabled
         toolbarHeightConstraint?.constant = enabled ? 44 : 0
+
+        grammarToolbar.isSecureEntryActive = textDocumentProxy.isSecureTextEntry
     }
 
     // MARK: - Layout
@@ -244,6 +251,10 @@ final class KeyboardViewController: UIInputViewController {
 
 extension KeyboardViewController: GrammarToolbarDelegate {
     func grammarToolbarDidTapFix(_ toolbar: GrammarToolbar) {
+        guard !textDocumentProxy.isSecureTextEntry else {
+            toolbar.showError("Grammar check is disabled in password fields.")
+            return
+        }
         guard hasFullAccess else {
             toolbar.showError("Enable Full Access in Settings → General → Keyboard.")
             return

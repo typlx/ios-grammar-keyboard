@@ -11,6 +11,17 @@ final class GrammarToolbar: UIView {
     private let previewLabel = UILabel()
     private let activityIndicator = UIActivityIndicatorView(style: .medium)
 
+    private var _isSecureEntryActive = false
+
+    /// When `true`, the Fix Grammar button stays disabled regardless of other state transitions.
+    var isSecureEntryActive: Bool {
+        get { _isSecureEntryActive }
+        set {
+            _isSecureEntryActive = newValue
+            fixButton.isEnabled = !newValue
+        }
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -73,20 +84,20 @@ final class GrammarToolbar: UIView {
 
     func showPreview(_ text: String) {
         activityIndicator.stopAnimating()
-        fixButton.isEnabled = true
+        fixButton.isEnabled = !_isSecureEntryActive
         let truncated = text.isEmpty ? "" : "→ \(text.prefix(40))\(text.count > 40 ? "…" : "")"
         animateLabel(text: truncated, color: .secondaryLabel)
     }
 
     func showError(_ message: String) {
         activityIndicator.stopAnimating()
-        fixButton.isEnabled = true
+        fixButton.isEnabled = !_isSecureEntryActive
         animateLabel(text: message, color: .systemRed)
     }
 
     func reset() {
         activityIndicator.stopAnimating()
-        fixButton.isEnabled = true
+        fixButton.isEnabled = !_isSecureEntryActive
         animateLabel(text: "", color: .secondaryLabel)
     }
 

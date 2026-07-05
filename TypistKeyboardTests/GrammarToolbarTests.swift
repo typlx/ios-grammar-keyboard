@@ -143,6 +143,37 @@ final class GrammarToolbarTests: XCTestCase {
         XCTAssertEqual(previewLabel()?.textColor, .secondaryLabel)
     }
 
+    // MARK: - isSecureEntryActive
+
+    func testSecureEntryActiveDisablesFixButton() {
+        toolbar.isSecureEntryActive = true
+        XCTAssertFalse(fixButton()?.isEnabled ?? true, "Fix button should be disabled in secure entry mode")
+    }
+
+    func testSecureEntryInactiveEnablesFixButton() {
+        toolbar.isSecureEntryActive = true
+        toolbar.isSecureEntryActive = false
+        XCTAssertTrue(fixButton()?.isEnabled ?? false, "Fix button should be re-enabled when leaving secure entry mode")
+    }
+
+    func testResetDoesNotEnableButtonInSecureMode() {
+        toolbar.isSecureEntryActive = true
+        toolbar.reset()
+        XCTAssertFalse(fixButton()?.isEnabled ?? true, "reset() must not re-enable the button while in secure entry mode")
+    }
+
+    func testShowErrorDoesNotEnableButtonInSecureMode() {
+        toolbar.isSecureEntryActive = true
+        toolbar.showError("Grammar check is disabled in password fields.")
+        XCTAssertFalse(fixButton()?.isEnabled ?? true, "showError() must not re-enable the button while in secure entry mode")
+    }
+
+    func testShowPreviewDoesNotEnableButtonInSecureMode() {
+        toolbar.isSecureEntryActive = true
+        toolbar.showPreview("corrected text")
+        XCTAssertFalse(fixButton()?.isEnabled ?? true, "showPreview() must not re-enable the button while in secure entry mode")
+    }
+
     // MARK: - Delegate
 
     func testDelegateReceivesFixTap() {
