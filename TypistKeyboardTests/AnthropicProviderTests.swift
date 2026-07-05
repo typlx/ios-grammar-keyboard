@@ -94,7 +94,7 @@ final class AnthropicProviderTests: XCTestCase {
         XCTAssertEqual(result.correctedText, "Correct answer.")
     }
 
-    func testEmptyAPIKeyThrowsUnauthorized() async {
+    func testEmptyAPIKeyThrowsNoApiConfigured() async {
         let emptyKeyProvider = AnthropicProvider(
             config: ProviderConfig(providerType: .anthropic, apiURL: "https://api.anthropic.com/v1/messages", model: "claude-haiku-4-5-20251001", apiKey: ""),
             session: session
@@ -102,8 +102,8 @@ final class AnthropicProviderTests: XCTestCase {
 
         do {
             _ = try await emptyKeyProvider.correct(GrammarRequest(text: "test"))
-            XCTFail("Expected unauthorized error")
-        } catch GrammarProviderError.unauthorized {
+            XCTFail("Expected noApiConfigured error")
+        } catch GrammarProviderError.noApiConfigured {
             // pass
         } catch {
             XCTFail("Unexpected error: \(error)")

@@ -6,26 +6,34 @@ public final class AnthropicProvider: GrammarProvider {
 
     private let config: ProviderConfig
     private let session: URLSession
+    private let sleeper: HTTPSleeper
 
-    // Current Anthropic Messages API version
     private static let anthropicVersion = "2023-06-01"
 
     public init(config: ProviderConfig, session: URLSession = .shared) {
         self.config = config
         self.session = session
+        self.sleeper = defaultHTTPSleeper
+    }
+
+    // Internal init for testing — allows injecting a no-op sleeper to skip real delays.
+    init(config: ProviderConfig, session: URLSession, sleeper: @escaping HTTPSleeper) {
+        self.config = config
+        self.session = session
+        self.sleeper = sleeper
     }
 
     public func validate() async throws {
-        guard !config.apiKey.isEmpty else { throw GrammarProviderError.unauthorized }
+        guard !config.apiKey.isEmpty else { throw GrammarProviderError.noApiConfigured }
         let request = GrammarRequest(text: "Hello world", context: .general)
         _ = try await correct(request)
     }
 
     public func correct(_ request: GrammarRequest) async throws -> GrammarResponse {
-        guard !config.apiKey.isEmpty else { throw GrammarProviderError.unauthorized }
+        guard !config.apiKey.isEmpty else { throw GrammarProviderError.noApiConfigured }
 
         let url = URL(string: config.apiURL)!
-        var urlRequest = URLRequest(url: url, timeoutInterval: 15)
+        var urlRequest = URLRequest(url: url, timeoutInterval: 30)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue(config.apiKey, forHTTPHeaderField: "x-api-key")
@@ -42,21 +50,9 @@ public final class AnthropicProvider: GrammarProvider {
 
         urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-        let data: Data
-        let response: URLResponse
-        do {
-            (data, response) = try await session.data(for: urlRequest)
-        } catch let urlError as URLError {
-            switch urlError.code {
-            case .notConnectedToInternet, .networkConnectionLost, .cannotConnectToHost, .cannotFindHost:
-                throw GrammarProviderError.networkUnavailable
-            case .timedOut:
-                throw GrammarProviderError.serverError(0, "Request timed out. Try again.")
-            default:
-                throw GrammarProviderError.networkUnavailable
-            }
+        let (data, _) = try await performHTTPWithRetry(sleeper: sleeper) {
+            try await self.session.data(for: urlRequest)
         }
-        try validate(httpResponse: response, data: data)
 
         let decoded: AnthropicMessagesResponse
         do {
@@ -68,20 +64,6 @@ public final class AnthropicProvider: GrammarProvider {
             throw GrammarProviderError.invalidResponse
         }
         return GrammarResponse(correctedText: textBlock.text.trimmingCharacters(in: .whitespacesAndNewlines))
-    }
-
-    private func validate(httpResponse: URLResponse, data: Data) throws {
-        guard let http = httpResponse as? HTTPURLResponse else {
-            throw GrammarProviderError.invalidResponse
-        }
-        switch http.statusCode {
-        case 200...299: return
-        case 401: throw GrammarProviderError.unauthorized
-        case 429: throw GrammarProviderError.rateLimited
-        default:
-            let msg = String(data: data, encoding: .utf8) ?? "unknown"
-            throw GrammarProviderError.serverError(http.statusCode, msg)
-        }
     }
 }
 

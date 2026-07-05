@@ -53,6 +53,7 @@ public struct GrammarResponse {
 
 public enum GrammarProviderError: Error, LocalizedError {
     case networkUnavailable
+    case noApiConfigured
     case unauthorized
     case rateLimited
     case serverError(Int, String)
@@ -61,9 +62,10 @@ public enum GrammarProviderError: Error, LocalizedError {
 
     public var errorDescription: String? {
         switch self {
-        case .networkUnavailable: return "No network access. Enable 'Allow Full Access' in Settings."
-        case .unauthorized: return "Invalid API key. Check your settings."
-        case .rateLimited: return "Rate limit exceeded. Try again later."
+        case .networkUnavailable: return "Check your internet connection."
+        case .noApiConfigured: return "No API key configured. Open Settings to set up a provider."
+        case .unauthorized: return "Invalid API key — check Settings."
+        case .rateLimited: return "Rate limit reached — please wait."
         case .serverError(let code, let msg): return "Server error \(code): \(msg)"
         case .invalidResponse: return "Unexpected response from provider."
         case .noFullAccess: return "Full Access is required for cloud grammar correction."
@@ -73,9 +75,10 @@ public enum GrammarProviderError: Error, LocalizedError {
     /// Short user-facing message suitable for display in the keyboard toolbar.
     public var gracefulKeyboardMessage: String {
         switch self {
-        case .networkUnavailable: return "Offline — check your connection."
-        case .unauthorized: return "Invalid API key. Check Settings."
-        case .rateLimited: return "Rate limit hit — try again shortly."
+        case .networkUnavailable: return "Check your internet connection"
+        case .noApiConfigured: return "No API key — open Settings to configure"
+        case .unauthorized: return "Invalid API key — check Settings"
+        case .rateLimited: return "Rate limit reached — please wait"
         case .serverError: return "Service unavailable. Try again later."
         case .invalidResponse: return "Unexpected response. Try again."
         case .noFullAccess: return "Enable Full Access in Settings → General → Keyboard."

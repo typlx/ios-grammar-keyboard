@@ -64,6 +64,17 @@ final class OpenAIProviderTests: XCTestCase {
     }
 
     func testCorrectThrowsRateLimitedOn429() async {
+        // Use no-op sleeper to avoid real delays during retry attempts
+        let fastProvider = OpenAIProvider(
+            config: ProviderConfig(
+                providerType: .openAI,
+                apiURL: "https://api.openai.com/v1/chat/completions",
+                model: "gpt-4o-mini",
+                apiKey: "test-key"
+            ),
+            session: session,
+            sleeper: { _ in }
+        )
         MockURLProtocol.requestHandler = { _ in
             let response = HTTPURLResponse(
                 url: URL(string: "https://api.openai.com")!,
@@ -75,7 +86,7 @@ final class OpenAIProviderTests: XCTestCase {
         }
 
         do {
-            _ = try await provider.correct(GrammarRequest(text: "test"))
+            _ = try await fastProvider.correct(GrammarRequest(text: "test"))
             XCTFail("Expected rate limited error")
         } catch GrammarProviderError.rateLimited {
             // pass
@@ -92,8 +103,8 @@ final class OpenAIProviderTests: XCTestCase {
 
         do {
             _ = try await emptyKeyProvider.correct(GrammarRequest(text: "test"))
-            XCTFail("Expected unauthorized error")
-        } catch GrammarProviderError.unauthorized {
+            XCTFail("Expected noApiConfigured error")
+        } catch GrammarProviderError.noApiConfigured {
             // pass
         } catch {
             XCTFail("Unexpected error: \(error)")

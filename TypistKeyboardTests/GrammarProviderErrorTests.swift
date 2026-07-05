@@ -100,6 +100,17 @@ final class AnthropicProviderErrorTests: XCTestCase {
     }
 
     func testRateLimitedOn429() async {
+        // Use no-op sleeper provider so retries don't incur real delays
+        let fastProvider = AnthropicProvider(
+            config: ProviderConfig(
+                providerType: .anthropic,
+                apiURL: "https://api.anthropic.com/v1/messages",
+                model: "claude-haiku-4-5-20251001",
+                apiKey: "test-key"
+            ),
+            session: session,
+            sleeper: { _ in }
+        )
         MockURLProtocol.requestHandler = { _ in
             let response = HTTPURLResponse(
                 url: URL(string: "https://api.anthropic.com")!,
@@ -111,7 +122,7 @@ final class AnthropicProviderErrorTests: XCTestCase {
         }
 
         do {
-            _ = try await provider.correct(GrammarRequest(text: "test"))
+            _ = try await fastProvider.correct(GrammarRequest(text: "test"))
             XCTFail("Expected rateLimited")
         } catch GrammarProviderError.rateLimited {
             // pass
@@ -278,6 +289,17 @@ final class OpenAIProviderErrorTests: XCTestCase {
     }
 
     func testRateLimitedOn429() async {
+        // Use no-op sleeper provider so retries don't incur real delays
+        let fastProvider = OpenAIProvider(
+            config: ProviderConfig(
+                providerType: .openAI,
+                apiURL: "https://api.openai.com/v1/chat/completions",
+                model: "gpt-4o-mini",
+                apiKey: "test-key"
+            ),
+            session: session,
+            sleeper: { _ in }
+        )
         MockURLProtocol.requestHandler = { _ in
             let response = HTTPURLResponse(
                 url: URL(string: "https://api.openai.com")!,
@@ -289,7 +311,7 @@ final class OpenAIProviderErrorTests: XCTestCase {
         }
 
         do {
-            _ = try await provider.correct(GrammarRequest(text: "test"))
+            _ = try await fastProvider.correct(GrammarRequest(text: "test"))
             XCTFail("Expected rateLimited")
         } catch GrammarProviderError.rateLimited {
             // pass
@@ -330,6 +352,12 @@ final class GrammarProviderErrorDescriptionTests: XCTestCase {
         XCTAssertFalse(error.errorDescription?.isEmpty ?? true)
     }
 
+    func testNoApiConfiguredDescription() {
+        let error = GrammarProviderError.noApiConfigured
+        XCTAssertFalse(error.errorDescription?.isEmpty ?? true)
+        XCTAssertTrue(error.errorDescription?.contains("Settings") ?? false)
+    }
+
     func testUnauthorizedDescription() {
         let error = GrammarProviderError.unauthorized
         XCTAssertFalse(error.errorDescription?.isEmpty ?? true)
@@ -362,19 +390,25 @@ final class GrammarProviderErrorDescriptionTests: XCTestCase {
 
 final class GrammarProviderErrorKeyboardMessageTests: XCTestCase {
 
-    func testNetworkUnavailableShowsOfflineMessage() {
+    func testNetworkUnavailableShowsConnectionMessage() {
         XCTAssertEqual(GrammarProviderError.networkUnavailable.gracefulKeyboardMessage,
-                       "Offline — check your connection.")
+                       "Check your internet connection")
+    }
+
+    func testNoApiConfiguredGuidesToSettings() {
+        let msg = GrammarProviderError.noApiConfigured.gracefulKeyboardMessage
+        XCTAssertTrue(msg.contains("Settings"), "Message should direct user to Settings")
+        XCTAssertFalse(msg.isEmpty)
     }
 
     func testUnauthorizedPromptToCheckSettings() {
         XCTAssertEqual(GrammarProviderError.unauthorized.gracefulKeyboardMessage,
-                       "Invalid API key. Check Settings.")
+                       "Invalid API key — check Settings")
     }
 
-    func testRateLimitedTellsUserToRetryShortly() {
+    func testRateLimitedTellsUserToWait() {
         XCTAssertEqual(GrammarProviderError.rateLimited.gracefulKeyboardMessage,
-                       "Rate limit hit — try again shortly.")
+                       "Rate limit reached — please wait")
     }
 
     func testServerErrorShowsServiceUnavailableRegardlessOfPayload() {
@@ -397,7 +431,7 @@ final class GrammarProviderErrorKeyboardMessageTests: XCTestCase {
 
     func testAllErrorsProduceNonEmptyKeyboardMessage() {
         let errors: [GrammarProviderError] = [
-            .networkUnavailable, .unauthorized, .rateLimited,
+            .networkUnavailable, .noApiConfigured, .unauthorized, .rateLimited,
             .serverError(500, ""), .invalidResponse, .noFullAccess
         ]
         for error in errors {
