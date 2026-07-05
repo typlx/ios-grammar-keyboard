@@ -46,6 +46,7 @@
 		220000000000000000000021 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001D /* PurchaseManager.swift */; };
 		220000000000000000000022 /* RevenueCatConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001E /* RevenueCatConfig.swift */; };
 		220000000000000000000023 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001F /* AuthRepository.swift */; };
+		220000000000000000000024 /* GrammarToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000005 /* GrammarToolbar.swift */; };
 		220000000000000000000120 /* FeatureGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001C /* FeatureGate.swift */; };
 		220000000000000000000300 /* KeyboardExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 110000000000000000000017 /* KeyboardExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		220000000000000000000400 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001B /* Assets.xcassets */; };
@@ -432,6 +433,7 @@
 				220000000000000000000021 /* PurchaseManager.swift in Sources */,
 				220000000000000000000022 /* RevenueCatConfig.swift in Sources */,
 				220000000000000000000023 /* AuthRepository.swift in Sources */,
+				220000000000000000000024 /* GrammarToolbar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

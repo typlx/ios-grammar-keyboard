@@ -69,6 +69,18 @@ public enum GrammarProviderError: Error, LocalizedError {
         case .noFullAccess: return "Full Access is required for cloud grammar correction."
         }
     }
+
+    /// Short user-facing message suitable for display in the keyboard toolbar.
+    public var gracefulKeyboardMessage: String {
+        switch self {
+        case .networkUnavailable: return "Offline — check your connection."
+        case .unauthorized: return "Invalid API key. Check Settings."
+        case .rateLimited: return "Rate limit hit — try again shortly."
+        case .serverError: return "Service unavailable. Try again later."
+        case .invalidResponse: return "Unexpected response. Try again."
+        case .noFullAccess: return "Enable Full Access in Settings → General → Keyboard."
+        }
+    }
 }
 
 public protocol GrammarProvider: AnyObject {

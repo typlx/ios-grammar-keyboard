@@ -311,21 +311,7 @@ extension KeyboardViewController: GrammarToolbarDelegate {
         }
     }
 
-    // User-facing messages that degrade gracefully for each failure mode.
     private func gracefulMessage(for error: GrammarProviderError) -> String {
-        switch error {
-        case .networkUnavailable:
-            return "Offline — check your connection."
-        case .unauthorized:
-            return "Invalid API key. Check Settings."
-        case .rateLimited:
-            return "Rate limit hit — try again shortly."
-        case .serverError(_, _):
-            return "Service unavailable. Try again later."
-        case .invalidResponse:
-            return "Unexpected response. Try again."
-        case .noFullAccess:
-            return "Enable Full Access in Settings → General → Keyboard."
-        }
+        error.gracefulKeyboardMessage
     }
 }

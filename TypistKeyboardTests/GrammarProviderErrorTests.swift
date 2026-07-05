@@ -357,3 +357,52 @@ final class GrammarProviderErrorDescriptionTests: XCTestCase {
         XCTAssertTrue(error.errorDescription?.contains("Full Access") ?? false)
     }
 }
+
+// MARK: - Keyboard toolbar user-facing messages
+
+final class GrammarProviderErrorKeyboardMessageTests: XCTestCase {
+
+    func testNetworkUnavailableShowsOfflineMessage() {
+        XCTAssertEqual(GrammarProviderError.networkUnavailable.gracefulKeyboardMessage,
+                       "Offline — check your connection.")
+    }
+
+    func testUnauthorizedPromptToCheckSettings() {
+        XCTAssertEqual(GrammarProviderError.unauthorized.gracefulKeyboardMessage,
+                       "Invalid API key. Check Settings.")
+    }
+
+    func testRateLimitedTellsUserToRetryShortly() {
+        XCTAssertEqual(GrammarProviderError.rateLimited.gracefulKeyboardMessage,
+                       "Rate limit hit — try again shortly.")
+    }
+
+    func testServerErrorShowsServiceUnavailableRegardlessOfPayload() {
+        XCTAssertEqual(GrammarProviderError.serverError(500, "Internal Server Error").gracefulKeyboardMessage,
+                       "Service unavailable. Try again later.")
+        XCTAssertEqual(GrammarProviderError.serverError(503, "down").gracefulKeyboardMessage,
+                       "Service unavailable. Try again later.")
+    }
+
+    func testInvalidResponseAsksUserToRetry() {
+        XCTAssertEqual(GrammarProviderError.invalidResponse.gracefulKeyboardMessage,
+                       "Unexpected response. Try again.")
+    }
+
+    func testNoFullAccessDirectsUserToSettings() {
+        let msg = GrammarProviderError.noFullAccess.gracefulKeyboardMessage
+        XCTAssertTrue(msg.contains("Full Access"), "Message should mention Full Access")
+        XCTAssertTrue(msg.contains("Settings"), "Message should direct user to Settings")
+    }
+
+    func testAllErrorsProduceNonEmptyKeyboardMessage() {
+        let errors: [GrammarProviderError] = [
+            .networkUnavailable, .unauthorized, .rateLimited,
+            .serverError(500, ""), .invalidResponse, .noFullAccess
+        ]
+        for error in errors {
+            XCTAssertFalse(error.gracefulKeyboardMessage.isEmpty,
+                           "\(error) should have a non-empty keyboard message")
+        }
+    }
+}
