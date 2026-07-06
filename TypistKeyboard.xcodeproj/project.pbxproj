@@ -52,6 +52,10 @@
 		220000000000000000000400 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001B /* Assets.xcassets */; };
 		FIREBASE0000000000000004 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = FIREBASE0000000000000002 /* FirebaseCore */; };
 		FIREBASE0000000000000005 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = FIREBASE0000000000000003 /* FirebaseAnalytics */; };
+		22000000000000000000000D /* TestHostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000028 /* TestHostViewController.swift */; };
+		220000000000000000000210 /* TypistKeyboardUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000029 /* TypistKeyboardUITests.swift */; };
+		220000000000000000000211 /* SettingsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000002A /* SettingsUITests.swift */; };
+		220000000000000000000212 /* KeyboardExtensionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000002B /* KeyboardExtensionUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +67,13 @@
 			remoteInfo = KeyboardExtension;
 		};
 		AA0000000000000000000002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 550000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 440000000000000000000001;
+			remoteInfo = TypistKeyboard;
+		};
+		AA0000000000000000000003 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 550000000000000000000001 /* Project object */;
 			proxyType = 1;
@@ -125,6 +136,11 @@
 		110000000000000000000025 /* SystemPromptsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemPromptsTests.swift; sourceTree = "<group>"; };
 		110000000000000000000026 /* KeychainManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManagerTests.swift; sourceTree = "<group>"; };
 		110000000000000000000027 /* AppGroupConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroupConfigTests.swift; sourceTree = "<group>"; };
+		110000000000000000000028 /* TestHostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHostViewController.swift; sourceTree = "<group>"; };
+		110000000000000000000029 /* TypistKeyboardUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypistKeyboardUITests.swift; sourceTree = "<group>"; };
+		11000000000000000000002A /* SettingsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsUITests.swift; sourceTree = "<group>"; };
+		11000000000000000000002B /* KeyboardExtensionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardExtensionUITests.swift; sourceTree = "<group>"; };
+		11000000000000000000002C /* TypistKeyboardUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TypistKeyboardUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +167,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		66000000000000000000000C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -161,6 +184,7 @@
 				330000000000000000000004 /* KeyboardExtension */,
 				330000000000000000000005 /* Shared */,
 				330000000000000000000009 /* TypistKeyboardTests */,
+				33000000000000000000000A /* TypistKeyboardUITests */,
 				330000000000000000000002 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -171,6 +195,7 @@
 				110000000000000000000016 /* TypistKeyboard.app */,
 				110000000000000000000017 /* KeyboardExtension.appex */,
 				110000000000000000000018 /* TypistKeyboardTests.xctest */,
+				11000000000000000000002C /* TypistKeyboardUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -182,6 +207,7 @@
 				110000000000000000000002 /* MainViewController.swift */,
 				110000000000000000000003 /* OnboardingViewController.swift */,
 				110000000000000000000004 /* SettingsViewController.swift */,
+				110000000000000000000028 /* TestHostViewController.swift */,
 				110000000000000000000014 /* Info.plist */,
 				110000000000000000000019 /* TypistKeyboard.entitlements */,
 				11000000000000000000001B /* Assets.xcassets */,
@@ -279,6 +305,16 @@
 			path = TypistKeyboardTests;
 			sourceTree = "<group>";
 		};
+		33000000000000000000000A /* TypistKeyboardUITests */ = {
+			isa = PBXGroup;
+			children = (
+				110000000000000000000029 /* TypistKeyboardUITests.swift */,
+				11000000000000000000002A /* SettingsUITests.swift */,
+				11000000000000000000002B /* KeyboardExtensionUITests.swift */,
+			);
+			path = TypistKeyboardUITests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -341,6 +377,24 @@
 			productReference = 110000000000000000000018 /* TypistKeyboardTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		440000000000000000000004 /* TypistKeyboardUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 880000000000000000000005 /* Build configuration list for PBXNativeTarget "TypistKeyboardUITests" */;
+			buildPhases = (
+				66000000000000000000000A /* Sources */,
+				66000000000000000000000B /* Resources */,
+				66000000000000000000000C /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				990000000000000000000003 /* PBXTargetDependency */,
+			);
+			name = TypistKeyboardUITests;
+			productName = TypistKeyboardUITests;
+			productReference = 11000000000000000000002C /* TypistKeyboardUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -358,6 +412,10 @@
 						CreatedOnToolsVersion = 15.0;
 					};
 					440000000000000000000003 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = 440000000000000000000001;
+					};
+					440000000000000000000004 = {
 						CreatedOnToolsVersion = 15.0;
 						TestTargetID = 440000000000000000000001;
 					};
@@ -383,6 +441,7 @@
 				440000000000000000000001 /* TypistKeyboard */,
 				440000000000000000000002 /* KeyboardExtension */,
 				440000000000000000000003 /* TypistKeyboardTests */,
+				440000000000000000000004 /* TypistKeyboardUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -404,6 +463,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		660000000000000000000008 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66000000000000000000000B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -434,6 +500,7 @@
 				220000000000000000000022 /* RevenueCatConfig.swift in Sources */,
 				220000000000000000000023 /* AuthRepository.swift in Sources */,
 				220000000000000000000024 /* GrammarToolbar.swift in Sources */,
+				22000000000000000000000D /* TestHostViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -475,6 +542,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		66000000000000000000000A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				220000000000000000000210 /* TypistKeyboardUITests.swift in Sources */,
+				220000000000000000000211 /* SettingsUITests.swift in Sources */,
+				220000000000000000000212 /* KeyboardExtensionUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -487,6 +564,11 @@
 			isa = PBXTargetDependency;
 			target = 440000000000000000000001 /* TypistKeyboard */;
 			targetProxy = AA0000000000000000000002 /* PBXContainerItemProxy */;
+		};
+		990000000000000000000003 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 440000000000000000000001 /* TypistKeyboard */;
+			targetProxy = AA0000000000000000000003 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -723,6 +805,38 @@
 			};
 			name = Release;
 		};
+		770000000000000000000009 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.typlx.keyboard.uitests;
+				PRODUCT_NAME = TypistKeyboardUITests;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TypistKeyboard;
+			};
+			name = Debug;
+		};
+		77000000000000000000000A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.typlx.keyboard.uitests;
+				PRODUCT_NAME = TypistKeyboardUITests;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TypistKeyboard;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -758,6 +872,15 @@
 			buildConfigurations = (
 				770000000000000000000007 /* Debug */,
 				770000000000000000000008 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		880000000000000000000005 /* Build configuration list for PBXNativeTarget "TypistKeyboardUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				770000000000000000000009 /* Debug */,
+				77000000000000000000000A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -159,11 +159,11 @@ final class SettingsViewController: UITableViewController {
                 cell.accessoryType = .disclosureIndicator
                 return cell
             case 1:
-                return switchCell(label: "Grammar Correction", isOn: autocorrectEnabled) { [weak self] isOn in
+                return switchCell(label: "Grammar Correction", isOn: autocorrectEnabled, accessibilityId: "grammarCorrectionSwitch") { [weak self] isOn in
                     self?.autocorrectEnabled = isOn
                 }
             default:
-                return switchCell(label: "Haptic Feedback", isOn: hapticFeedbackEnabled) { [weak self] isOn in
+                return switchCell(label: "Haptic Feedback", isOn: hapticFeedbackEnabled, accessibilityId: "hapticFeedbackSwitch") { [weak self] isOn in
                     self?.hapticFeedbackEnabled = isOn
                 }
             }
@@ -251,12 +251,13 @@ final class SettingsViewController: UITableViewController {
         return cell
     }
 
-    private func switchCell(label: String, isOn: Bool, onChange: @escaping (Bool) -> Void) -> UITableViewCell {
+    private func switchCell(label: String, isOn: Bool, accessibilityId: String? = nil, onChange: @escaping (Bool) -> Void) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
         cell.textLabel?.text = label
         cell.selectionStyle = .none
         let toggle = UISwitch()
         toggle.isOn = isOn
+        toggle.accessibilityIdentifier = accessibilityId
         toggle.addAction(UIAction { _ in onChange(toggle.isOn) }, for: .valueChanged)
         cell.accessoryView = toggle
         return cell

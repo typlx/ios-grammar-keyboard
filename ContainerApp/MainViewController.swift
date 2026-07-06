@@ -14,6 +14,7 @@ final class MainViewController: UIViewController {
         let settingsBtn = UIButton(type: .system)
         settingsBtn.setTitle("Open Settings", for: .normal)
         settingsBtn.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
+        settingsBtn.accessibilityIdentifier = "openSettingsButton"
         settingsBtn.addTarget(self, action: #selector(openSettings), for: .touchUpInside)
 
         let stack = UIStackView(arrangedSubviews: [makeHeroLabel(), makeSubtitleLabel(), settingsBtn])
@@ -43,6 +44,7 @@ final class MainViewController: UIViewController {
         label.text = "Typist"
         label.font = .systemFont(ofSize: 48, weight: .bold)
         label.textAlignment = .center
+        label.accessibilityIdentifier = "mainTitleLabel"
         return label
     }
 

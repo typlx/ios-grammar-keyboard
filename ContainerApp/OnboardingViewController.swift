@@ -55,6 +55,7 @@ final class OnboardingViewController: UIViewController {
         let doneBtn = UIButton(type: .system)
         doneBtn.setTitle("Got it", for: .normal)
         doneBtn.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
+        doneBtn.accessibilityIdentifier = "onboardingGotItButton"
         doneBtn.addTarget(self, action: #selector(doneTapped), for: .touchUpInside)
 
         let mainStack = UIStackView(arrangedSubviews: [titleLabel, stepsStack, privacyLabel, doneBtn])

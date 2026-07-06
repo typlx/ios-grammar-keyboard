@@ -12,7 +12,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
 
         window = UIWindow(frame: UIScreen.main.bounds)
-        let nav = UINavigationController(rootViewController: MainViewController())
+        let isUITesting = CommandLine.arguments.contains("--uitesting")
+        let root = isUITesting ? TestHostViewController() : MainViewController()
+        let nav = UINavigationController(rootViewController: root)
         window?.rootViewController = nav
         window?.makeKeyAndVisible()
         return true

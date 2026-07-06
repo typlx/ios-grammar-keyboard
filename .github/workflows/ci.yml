@@ -35,15 +35,26 @@ jobs:
             build \
             | xcpretty || true
 
-      - name: Test
+      - name: Unit Tests
         run: |
           mkdir -p test-results
           xcodebuild test \
             -project TypistKeyboard.xcodeproj \
             -scheme "$SCHEME" \
             -destination "$DESTINATION" \
+            -only-testing:TypistKeyboardTests \
             CODE_SIGNING_ALLOWED=NO \
-            | xcpretty --report junit --output test-results/junit.xml || true
+            | xcpretty --report junit --output test-results/unit-junit.xml || true
+
+      - name: UI Tests
+        run: |
+          xcodebuild test \
+            -project TypistKeyboard.xcodeproj \
+            -scheme "$SCHEME" \
+            -destination "$DESTINATION" \
+            -only-testing:TypistKeyboardUITests \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcpretty --report junit --output test-results/ui-junit.xml || true
 
       - name: Upload test results
         if: always()

@@ -45,6 +45,7 @@ final class GrammarToolbar: UIView {
         config.cornerStyle = .capsule
         config.baseBackgroundColor = .systemBlue
         fixButton.configuration = config
+        fixButton.accessibilityIdentifier = "fixGrammarButton"
         fixButton.addTarget(self, action: #selector(fixTapped), for: .touchUpInside)
 
         // Preview label
@@ -52,6 +53,7 @@ final class GrammarToolbar: UIView {
         previewLabel.textColor = .secondaryLabel
         previewLabel.numberOfLines = 1
         previewLabel.text = ""
+        previewLabel.accessibilityIdentifier = "grammarPreviewLabel"
 
         // Activity indicator
         activityIndicator.hidesWhenStopped = true
