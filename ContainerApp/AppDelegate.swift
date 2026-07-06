@@ -1,3 +1,4 @@
+import FirebaseCore
 import UIKit
 
 @main
@@ -8,6 +9,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        FirebaseApp.configure()
+
         window = UIWindow(frame: UIScreen.main.bounds)
         let nav = UINavigationController(rootViewController: MainViewController())
         window?.rootViewController = nav
