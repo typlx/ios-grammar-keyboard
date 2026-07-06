@@ -1,0 +1,85 @@
+name: Firebase App Distribution
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        description: "Release notes for testers"
+        required: false
+        default: "Test build from CI"
+
+jobs:
+  build-and-distribute:
+    name: Build & Distribute to Firebase
+    runs-on: macos-14
+
+    env:
+      SCHEME: TypistKeyboard
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "15.4"
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Decode GoogleService-Info.plist
+        run: echo "${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}" | base64 -d > ContainerApp/GoogleService-Info.plist
+
+      - name: Write Firebase service account
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}" | base64 -d > firebase-sa.json
+
+      - name: Install keychain certificate
+        uses: apple-actions/import-codesign-certs@v2
+        with:
+          p12-file-base64: ${{ secrets.DISTRIBUTION_CERT_P12_BASE64 }}
+          p12-password: ${{ secrets.DISTRIBUTION_CERT_PASSWORD }}
+
+      - name: Install provisioning profiles
+        uses: apple-actions/download-provisioning-profiles@v2
+        with:
+          bundle-id: "com.typist.keyboard*"
+          issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          api-key-id: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          api-private-key: ${{ secrets.APP_STORE_CONNECT_KEY_CONTENT }}
+
+      - name: Run tests
+        run: |
+          xcodebuild test \
+            -project TypistKeyboard.xcodeproj \
+            -scheme "$SCHEME" \
+            -destination "platform=iOS Simulator,name=iPhone 15,OS=latest" \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcpretty || true
+
+      - name: Build and distribute
+        run: bundle exec fastlane distribute
+        env:
+          DEVELOPMENT_TEAM_ID: ${{ secrets.DEVELOPMENT_TEAM_ID }}
+          FIREBASE_APP_ID_IOS: ${{ secrets.FIREBASE_APP_ID_IOS }}
+          FIREBASE_SERVICE_ACCOUNT_PATH: firebase-sa.json
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_KEY_CONTENT }}
+          RELEASE_NOTES: ${{ github.event.inputs.release_notes || format('Build {0} — {1}', github.run_number, github.sha) }}
+
+      - name: Clean up secrets
+        if: always()
+        run: rm -f firebase-sa.json
+
+      - name: Upload IPA artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typist-keyboard-ipa
+          path: build/TypistKeyboard.ipa

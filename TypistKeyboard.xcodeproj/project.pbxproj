@@ -36,6 +36,8 @@
 		220000000000000000000204 /* ProviderRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000013 /* ProviderRegistryTests.swift */; };
 		220000000000000000000300 /* KeyboardExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 110000000000000000000017 /* KeyboardExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		220000000000000000000400 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11000000000000000000001B /* Assets.xcassets */; };
+		FIREBASE0000000000000004 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = FIREBASE0000000000000002 /* FirebaseCore */; };
+		FIREBASE0000000000000005 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = FIREBASE0000000000000003 /* FirebaseAnalytics */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +106,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FIREBASE0000000000000004 /* FirebaseCore in Frameworks */,
+				FIREBASE0000000000000005 /* FirebaseAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,6 +243,10 @@
 				990000000000000000000001 /* PBXTargetDependency */,
 			);
 			name = TypistKeyboard;
+			packageProductDependencies = (
+				FIREBASE0000000000000002 /* FirebaseCore */,
+				FIREBASE0000000000000003 /* FirebaseAnalytics */,
+			);
 			productName = TypistKeyboard;
 			productReference = 110000000000000000000016 /* TypistKeyboard.app */;
 			productType = "com.apple.product-type.application";
@@ -310,6 +318,9 @@
 			);
 			mainGroup = 330000000000000000000001;
 			productRefGroup = 330000000000000000000002 /* Products */;
+			packageReferences = (
+				FIREBASE0000000000000001 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -682,6 +693,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FIREBASE0000000000000001 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FIREBASE0000000000000002 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FIREBASE0000000000000001 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		FIREBASE0000000000000003 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FIREBASE0000000000000001 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 550000000000000000000001 /* Project object */;
 }

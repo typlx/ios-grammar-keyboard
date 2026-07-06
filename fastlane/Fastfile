@@ -1,0 +1,48 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Build and distribute to Firebase App Distribution"
+  lane :distribute do
+    setup_ci if ENV["CI"]
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+      key_content: ENV["APP_STORE_CONNECT_KEY_CONTENT"],
+      is_key_content_base64: true,
+    ) if ENV["APP_STORE_CONNECT_KEY_ID"]
+
+    update_code_signing_settings(
+      use_automatic_signing: true,
+      path: "TypistKeyboard.xcodeproj",
+      team_id: ENV["DEVELOPMENT_TEAM_ID"],
+    )
+
+    build_app(
+      project: "TypistKeyboard.xcodeproj",
+      scheme: "TypistKeyboard",
+      export_method: "ad-hoc",
+      output_directory: "./build",
+      output_name: "TypistKeyboard.ipa",
+      clean: true,
+    )
+
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID_IOS"],
+      ipa_path: "./build/TypistKeyboard.ipa",
+      groups: "qa-testers",
+      release_notes: ENV["RELEASE_NOTES"] || "Test build from CI — #{ENV['GITHUB_SHA'] || 'local'}",
+      service_credentials_file: ENV["FIREBASE_SERVICE_ACCOUNT_PATH"],
+    )
+  end
+
+  desc "Run tests"
+  lane :test do
+    run_tests(
+      project: "TypistKeyboard.xcodeproj",
+      scheme: "TypistKeyboard",
+      devices: ["iPhone 15"],
+      code_coverage: true,
+    )
+  end
+end

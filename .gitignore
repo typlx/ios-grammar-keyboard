@@ -1,0 +1,28 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserdata
+*.xcworkspace/xcuserdata/
+
+# macOS
+.DS_Store
+*.swp
+*~
+
+# Firebase
+GoogleService-Info.plist
+firebase-sa.json
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+
+# Ruby
+vendor/bundle/
+.bundle/
+Gemfile.lock
+
+# CocoaPods (if added later)
+Pods/
