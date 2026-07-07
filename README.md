@@ -2,6 +2,8 @@
 
 iOS custom keyboard extension with a grammar-fix button. Uses any OpenAI-compatible chat completions API to fix grammar and spelling in-place. Part of the [Typlx](https://typlx.com) open-source grammar-checking suite.
 
+**→ [Join the Typlx Pro waitlist](https://typlx.com/pro)** — advanced suggestions, multi-language support, and offline mode coming soon.
+
 ## Features
 
 - Custom keyboard extension with a "Fix Grammar" button
@@ -105,6 +107,14 @@ Content-Type: application/json
 ```
 
 Compatible with OpenAI, Anthropic (via proxy), Ollama, and any other provider that implements the chat completions API.
+
+## Related Projects
+
+| Repo | Platform |
+| ---- | -------- |
+| [typlx/chrome-grammar-fix-extension](https://github.com/typlx/chrome-grammar-fix-extension) | Browser extension (Chrome, Edge, Firefox) |
+| [typlx/android-grammar-keyboard](https://github.com/typlx/android-grammar-keyboard) | Android custom IME keyboard |
+| [typlx/typlx-website](https://github.com/typlx/typlx-website) | typlx.com website |
 
 ## License
 
