@@ -79,6 +79,13 @@ final class GrammarToolbar: UIView {
         delegate?.grammarToolbarDidTapFix(self)
     }
 
+    func applyTheme(_ theme: KeyboardTheme) {
+        backgroundColor = theme.toolbarBackground
+        var config = fixButton.configuration ?? UIButton.Configuration.filled()
+        config.baseBackgroundColor = theme.accent
+        fixButton.configuration = config
+    }
+
     // MARK: - State
 
     func showLoading() {

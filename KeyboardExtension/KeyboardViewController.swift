@@ -8,6 +8,7 @@ final class KeyboardViewController: UIInputViewController {
     private var pendingCorrectedText: String?
     private var alternativesPopup: AlternativesPopupView?
     private let autocorrectMachine = AutocorrectStateMachine()
+    private var keyButtons: [UIButton] = []
 
     // Tracks the last text seen from the proxy to detect changes.
     private var lastSeenText: String = ""
@@ -26,6 +27,27 @@ final class KeyboardViewController: UIInputViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureProvider()
+        applyTheme()
+    }
+
+    // MARK: - Theme
+
+    private func applyTheme() {
+        let theme = ThemeManager.shared.resolvedTheme(for: traitCollection)
+        keyboardView?.backgroundColor = theme.keyboardBackground
+        for btn in keyButtons {
+            btn.backgroundColor = theme.keyBackground
+            btn.setTitleColor(theme.keyText, for: .normal)
+            btn.layer.shadowColor = UIColor.black.cgColor
+        }
+        grammarToolbar.applyTheme(theme)
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+            applyTheme()
+        }
     }
 
     // MARK: - Provider
@@ -71,7 +93,7 @@ final class KeyboardViewController: UIInputViewController {
             ["z","x","c","v","b","n","m"],
         ]
         let container = UIView()
-        container.backgroundColor = UIColor(white: 0.82, alpha: 1)
+        container.backgroundColor = ThemeManager.shared.resolvedTheme(for: traitCollection).keyboardBackground
 
         var previousRow: UIView?
         for (_, row) in rows.enumerated() {
@@ -158,16 +180,18 @@ final class KeyboardViewController: UIInputViewController {
     }
 
     private func makeKeyButton(title: String) -> UIButton {
+        let theme = ThemeManager.shared.resolvedTheme(for: traitCollection)
         let btn = UIButton(type: .system)
         btn.setTitle(title, for: .normal)
-        btn.backgroundColor = .white
-        btn.setTitleColor(.black, for: .normal)
+        btn.backgroundColor = theme.keyBackground
+        btn.setTitleColor(theme.keyText, for: .normal)
         btn.titleLabel?.font = .systemFont(ofSize: 17)
         btn.layer.cornerRadius = 5
         btn.layer.shadowColor = UIColor.black.cgColor
         btn.layer.shadowOpacity = 0.25
         btn.layer.shadowOffset = CGSize(width: 0, height: 1)
         btn.layer.shadowRadius = 0
+        keyButtons.append(btn)
         return btn
     }
 
@@ -206,7 +230,7 @@ final class KeyboardViewController: UIInputViewController {
     private func showAlternativesPopup(for key: UIButton, alternatives: [String]) {
         dismissAlternativesPopup()
 
-        let popup = AlternativesPopupView(alternatives: alternatives)
+        let popup = AlternativesPopupView(alternatives: alternatives, traitCollection: traitCollection)
         let keyFrameInView = key.convert(key.bounds, to: view)
         let popupSize = AlternativesPopupView.size(for: alternatives.count)
 

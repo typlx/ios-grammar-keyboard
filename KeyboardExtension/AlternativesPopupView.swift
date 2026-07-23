@@ -14,10 +14,14 @@ final class AlternativesPopupView: UIView {
         highlightedIndex.map { alternatives[$0] }
     }
 
-    init(alternatives: [String]) {
+    private let accentColor: UIColor
+
+    init(alternatives: [String], traitCollection: UITraitCollection? = nil) {
         self.alternatives = alternatives
+        let tc = traitCollection ?? UITraitCollection.current
+        self.accentColor = ThemeManager.shared.resolvedTheme(for: tc).accent
         super.init(frame: .zero)
-        setup()
+        setup(traitCollection: tc)
     }
 
     required init?(coder: NSCoder) {
@@ -36,12 +40,9 @@ final class AlternativesPopupView: UIView {
 
     // MARK: - Private setup
 
-    private func setup() {
-        backgroundColor = UIColor { tc in
-            tc.userInterfaceStyle == .dark
-                ? UIColor(white: 0.25, alpha: 1)
-                : UIColor.white
-        }
+    private func setup(traitCollection: UITraitCollection) {
+        let theme = ThemeManager.shared.resolvedTheme(for: traitCollection)
+        backgroundColor = theme.keyBackground
         layer.cornerRadius = 10
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.3
@@ -101,7 +102,7 @@ final class AlternativesPopupView: UIView {
             cells[prev].textColor = .label
         }
         if let curr = newIndex, curr < cells.count {
-            cells[curr].backgroundColor = .systemBlue
+            cells[curr].backgroundColor = accentColor
             cells[curr].textColor = .white
         }
         highlightedIndex = newIndex
