@@ -206,7 +206,8 @@ final class KeyboardViewController: UIInputViewController {
 
         let centeredX = keyFrameInView.midX - popupSize.width / 2
         let clampedX = max(4, min(view.bounds.width - popupSize.width - 4, centeredX))
-        let popupY = max(0, keyFrameInView.minY - popupSize.height - 4)
+        let grammarToolbarHeight = grammarToolbar.frame.maxY
+        let popupY = max(grammarToolbarHeight, keyFrameInView.minY - popupSize.height - 4)
 
         popup.frame = CGRect(origin: CGPoint(x: clampedX, y: popupY), size: popupSize)
         view.addSubview(popup)
