@@ -10,6 +10,10 @@
 		220000000000000000000509 /* KeyAlternatives.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000033 /* KeyAlternatives.swift */; };
 		22000000000000000000050A /* AlternativesPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000034 /* AlternativesPopupView.swift */; };
 		22000000000000000000020D /* KeyAlternativesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000035 /* KeyAlternativesTests.swift */; };
+		22000000000000000000000D /* AutocorrectStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000036 /* AutocorrectStateMachine.swift */; };
+		22000000000000000000050B /* AutocorrectStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000036 /* AutocorrectStateMachine.swift */; };
+		22000000000000000000050C /* AutocorrectIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000037 /* AutocorrectIndicatorView.swift */; };
+		22000000000000000000020E /* AutocorrectIndicatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000038 /* AutocorrectIndicatorTests.swift */; };
 		220000000000000000000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000001 /* AppDelegate.swift */; };
 		220000000000000000000002 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000002 /* MainViewController.swift */; };
 		220000000000000000000003 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000003 /* OnboardingViewController.swift */; };
@@ -103,6 +107,9 @@
 		110000000000000000000033 /* KeyAlternatives.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyAlternatives.swift; sourceTree = "<group>"; };
 		110000000000000000000034 /* AlternativesPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlternativesPopupView.swift; sourceTree = "<group>"; };
 		110000000000000000000035 /* KeyAlternativesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyAlternativesTests.swift; sourceTree = "<group>"; };
+		110000000000000000000036 /* AutocorrectStateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutocorrectStateMachine.swift; sourceTree = "<group>"; };
+		110000000000000000000037 /* AutocorrectIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutocorrectIndicatorView.swift; sourceTree = "<group>"; };
+		110000000000000000000038 /* AutocorrectIndicatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutocorrectIndicatorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,6 +179,8 @@
 				110000000000000000000006 /* KeyboardViewController.swift */,
 				110000000000000000000033 /* KeyAlternatives.swift */,
 				110000000000000000000034 /* AlternativesPopupView.swift */,
+				110000000000000000000036 /* AutocorrectStateMachine.swift */,
+				110000000000000000000037 /* AutocorrectIndicatorView.swift */,
 				110000000000000000000015 /* Info.plist */,
 				11000000000000000000001A /* KeyboardExtension.entitlements */,
 			);
@@ -226,6 +235,7 @@
 				110000000000000000000012 /* OpenAIProviderTests.swift */,
 				110000000000000000000013 /* ProviderRegistryTests.swift */,
 				110000000000000000000035 /* KeyAlternativesTests.swift */,
+				110000000000000000000038 /* AutocorrectIndicatorTests.swift */,
 			);
 			path = TypistKeyboardTests;
 			sourceTree = "<group>";
@@ -371,6 +381,7 @@
 				22000000000000000000000A /* OpenAIProvider.swift in Sources */,
 				22000000000000000000000B /* ProviderRegistry.swift in Sources */,
 				22000000000000000000000C /* SystemPrompts.swift in Sources */,
+				22000000000000000000000D /* AutocorrectStateMachine.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,6 +401,8 @@
 				220000000000000000000109 /* SystemPrompts.swift in Sources */,
 				220000000000000000000509 /* KeyAlternatives.swift in Sources */,
 				22000000000000000000050A /* AlternativesPopupView.swift in Sources */,
+				22000000000000000000050B /* AutocorrectStateMachine.swift in Sources */,
+				22000000000000000000050C /* AutocorrectIndicatorView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -403,6 +416,7 @@
 				220000000000000000000203 /* OpenAIProviderTests.swift in Sources */,
 				220000000000000000000204 /* ProviderRegistryTests.swift in Sources */,
 				22000000000000000000020D /* KeyAlternativesTests.swift in Sources */,
+				22000000000000000000020E /* AutocorrectIndicatorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
