@@ -67,8 +67,6 @@ enum AutocorrectDictionary {
         "wiht": "with",
         "adn": "and",
         "nad": "and",
-        "fo": "of",
-        "ot": "to",
         "siad": "said",
         "recieve": "receive",
         "beleive": "believe",
