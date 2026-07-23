@@ -6,6 +6,7 @@ final class KeyboardViewController: UIInputViewController {
     private var keyboardView: UIView?
     private var currentProvider: (any GrammarProvider)?
     private var pendingCorrectedText: String?
+    private var alternativesPopup: AlternativesPopupView?
 
     // Tracks the last text seen from the proxy to detect changes.
     private var lastSeenText: String = ""
@@ -111,6 +112,14 @@ final class KeyboardViewController: UIInputViewController {
             let btn = makeKeyButton(title: key)
             btn.addTarget(self, action: #selector(keyTapped(_:)), for: .touchUpInside)
             btn.accessibilityLabel = key
+            if !KeyAlternatives.alternatives(for: key).isEmpty {
+                let longPress = UILongPressGestureRecognizer(
+                    target: self,
+                    action: #selector(keyLongPressed(_:))
+                )
+                longPress.minimumPressDuration = 0.4
+                btn.addGestureRecognizer(longPress)
+            }
             stack.addArrangedSubview(btn)
         }
         return stack
@@ -158,6 +167,69 @@ final class KeyboardViewController: UIInputViewController {
     }
 
     // MARK: - Key actions
+
+    @objc private func keyLongPressed(_ gesture: UILongPressGestureRecognizer) {
+        guard let btn = gesture.view as? UIButton,
+              let key = btn.currentTitle else { return }
+
+        let alternatives = KeyAlternatives.alternatives(for: key)
+        guard !alternatives.isEmpty else { return }
+
+        switch gesture.state {
+        case .began:
+            showAlternativesPopup(for: btn, alternatives: alternatives)
+
+        case .changed:
+            let location = gesture.location(in: view)
+            alternativesPopup?.updateHighlight(forTouchAt: location)
+
+        case .ended:
+            if let selected = alternativesPopup?.selectedAlternative {
+                textDocumentProxy.insertText(selected)
+                pendingCorrectedText = nil
+            }
+            dismissAlternativesPopup()
+
+        case .cancelled, .failed:
+            dismissAlternativesPopup()
+
+        default:
+            break
+        }
+    }
+
+    private func showAlternativesPopup(for key: UIButton, alternatives: [String]) {
+        dismissAlternativesPopup()
+
+        let popup = AlternativesPopupView(alternatives: alternatives)
+        let keyFrameInView = key.convert(key.bounds, to: view)
+        let popupSize = AlternativesPopupView.size(for: alternatives.count)
+
+        let centeredX = keyFrameInView.midX - popupSize.width / 2
+        let clampedX = max(4, min(view.bounds.width - popupSize.width - 4, centeredX))
+        let popupY = max(0, keyFrameInView.minY - popupSize.height - 4)
+
+        popup.frame = CGRect(origin: CGPoint(x: clampedX, y: popupY), size: popupSize)
+        view.addSubview(popup)
+        alternativesPopup = popup
+
+        popup.alpha = 0
+        popup.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        UIView.animate(withDuration: 0.12, delay: 0, options: .curveEaseOut) {
+            popup.alpha = 1
+            popup.transform = .identity
+        }
+    }
+
+    private func dismissAlternativesPopup() {
+        guard let popup = alternativesPopup else { return }
+        alternativesPopup = nil
+        UIView.animate(withDuration: 0.1) {
+            popup.alpha = 0
+        } completion: { _ in
+            popup.removeFromSuperview()
+        }
+    }
 
     @objc private func keyTapped(_ sender: UIButton) {
         guard let title = sender.currentTitle else { return }
