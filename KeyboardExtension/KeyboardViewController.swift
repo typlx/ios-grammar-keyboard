@@ -7,6 +7,7 @@ final class KeyboardViewController: UIInputViewController {
     private var currentProvider: (any GrammarProvider)?
     private var pendingCorrectedText: String?
     private var alternativesPopup: AlternativesPopupView?
+    private let autocorrectMachine = AutocorrectStateMachine()
 
     // Tracks the last text seen from the proxy to detect changes.
     private var lastSeenText: String = ""
@@ -16,6 +17,10 @@ final class KeyboardViewController: UIInputViewController {
         configureProvider()
         setupToolbar()
         setupKeyboard()
+        autocorrectMachine.delegate = self
+        grammarToolbar.onAutocorrectUndo = { [weak self] in
+            self?.autocorrectMachine.undo()
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -237,7 +242,18 @@ final class KeyboardViewController: UIInputViewController {
     }
 
     @objc private func spaceTapped() {
-        textDocumentProxy.insertText(" ")
+        let before = textDocumentProxy.documentContextBeforeInput ?? ""
+        let lastWord = before.components(separatedBy: .whitespaces).last ?? ""
+
+        if !lastWord.isEmpty, let correction = AutocorrectDictionary.correction(for: lastWord) {
+            for _ in 0..<lastWord.count {
+                textDocumentProxy.deleteBackward()
+            }
+            textDocumentProxy.insertText(correction + " ")
+            autocorrectMachine.show(original: lastWord, corrected: correction)
+        } else {
+            textDocumentProxy.insertText(" ")
+        }
     }
 
     @objc private func deleteTapped() {
@@ -276,6 +292,27 @@ final class KeyboardViewController: UIInputViewController {
             textDocumentProxy.deleteBackward()
         }
         textDocumentProxy.insertText(corrected)
+    }
+}
+
+// MARK: - AutocorrectStateMachineDelegate
+
+extension KeyboardViewController: AutocorrectStateMachineDelegate {
+    func autocorrectStateMachine(_ machine: AutocorrectStateMachine, didShow original: String, corrected: String) {
+        grammarToolbar.showAutocorrectIndicator(original: original, corrected: corrected)
+    }
+
+    func autocorrectStateMachineDidDismiss(_ machine: AutocorrectStateMachine) {
+        grammarToolbar.hideAutocorrectIndicator()
+    }
+
+    func autocorrectStateMachine(_ machine: AutocorrectStateMachine, didUndo original: String, corrected: String) {
+        // Replace the corrected word + trailing space with the original word + space.
+        textDocumentProxy.deleteBackward() // remove the space inserted after correction
+        for _ in 0..<corrected.count {
+            textDocumentProxy.deleteBackward()
+        }
+        textDocumentProxy.insertText(original)
     }
 }
 
