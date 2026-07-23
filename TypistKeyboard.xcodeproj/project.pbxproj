@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		220000000000000000000509 /* KeyAlternatives.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000033 /* KeyAlternatives.swift */; };
+		22000000000000000000050A /* AlternativesPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000034 /* AlternativesPopupView.swift */; };
+		22000000000000000000020D /* KeyAlternativesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000035 /* KeyAlternativesTests.swift */; };
 		220000000000000000000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000001 /* AppDelegate.swift */; };
 		220000000000000000000002 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000002 /* MainViewController.swift */; };
 		220000000000000000000003 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000003 /* OnboardingViewController.swift */; };
@@ -99,6 +102,9 @@
 		110000000000000000000019 /* TypistKeyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TypistKeyboard.entitlements; sourceTree = "<group>"; };
 		11000000000000000000001A /* KeyboardExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeyboardExtension.entitlements; sourceTree = "<group>"; };
 		11000000000000000000001B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		110000000000000000000033 /* KeyAlternatives.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyAlternatives.swift; sourceTree = "<group>"; };
+		110000000000000000000034 /* AlternativesPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlternativesPopupView.swift; sourceTree = "<group>"; };
+		110000000000000000000035 /* KeyAlternativesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyAlternativesTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,6 +174,8 @@
 			children = (
 				110000000000000000000005 /* GrammarToolbar.swift */,
 				110000000000000000000006 /* KeyboardViewController.swift */,
+				110000000000000000000033 /* KeyAlternatives.swift */,
+				110000000000000000000034 /* AlternativesPopupView.swift */,
 				110000000000000000000015 /* Info.plist */,
 				11000000000000000000001A /* KeyboardExtension.entitlements */,
 			);
@@ -221,6 +229,7 @@
 				110000000000000000000011 /* MockURLProtocol.swift */,
 				110000000000000000000012 /* OpenAIProviderTests.swift */,
 				110000000000000000000013 /* ProviderRegistryTests.swift */,
+				110000000000000000000035 /* KeyAlternativesTests.swift */,
 			);
 			path = TypistKeyboardTests;
 			sourceTree = "<group>";
@@ -390,6 +399,8 @@
 				220000000000000000000107 /* OpenAIProvider.swift in Sources */,
 				220000000000000000000108 /* ProviderRegistry.swift in Sources */,
 				220000000000000000000109 /* SystemPrompts.swift in Sources */,
+				220000000000000000000509 /* KeyAlternatives.swift in Sources */,
+				22000000000000000000050A /* AlternativesPopupView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -402,6 +413,7 @@
 				220000000000000000000202 /* MockURLProtocol.swift in Sources */,
 				220000000000000000000203 /* OpenAIProviderTests.swift in Sources */,
 				220000000000000000000204 /* ProviderRegistryTests.swift in Sources */,
+				22000000000000000000020D /* KeyAlternativesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
