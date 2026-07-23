@@ -243,7 +243,7 @@ final class KeyboardViewController: UIInputViewController {
 
     @objc private func spaceTapped() {
         let before = textDocumentProxy.documentContextBeforeInput ?? ""
-        let lastWord = before.components(separatedBy: .whitespaces).last ?? ""
+        let lastWord = before.components(separatedBy: .whitespacesAndNewlines).last ?? ""
 
         if !lastWord.isEmpty, let correction = AutocorrectDictionary.correction(for: lastWord) {
             for _ in 0..<lastWord.count {
