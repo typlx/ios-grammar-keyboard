@@ -10,7 +10,6 @@
 		220000000000000000000509 /* KeyAlternatives.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000033 /* KeyAlternatives.swift */; };
 		22000000000000000000050A /* AlternativesPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000034 /* AlternativesPopupView.swift */; };
 		22000000000000000000020D /* KeyAlternativesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000035 /* KeyAlternativesTests.swift */; };
-		22000000000000000000000D /* AutocorrectStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000036 /* AutocorrectStateMachine.swift */; };
 		22000000000000000000050B /* AutocorrectStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000036 /* AutocorrectStateMachine.swift */; };
 		22000000000000000000050C /* AutocorrectIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000037 /* AutocorrectIndicatorView.swift */; };
 		22000000000000000000020E /* AutocorrectIndicatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000038 /* AutocorrectIndicatorTests.swift */; };
@@ -381,7 +380,6 @@
 				22000000000000000000000A /* OpenAIProvider.swift in Sources */,
 				22000000000000000000000B /* ProviderRegistry.swift in Sources */,
 				22000000000000000000000C /* SystemPrompts.swift in Sources */,
-				22000000000000000000000D /* AutocorrectStateMachine.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
