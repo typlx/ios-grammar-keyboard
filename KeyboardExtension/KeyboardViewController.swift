@@ -189,10 +189,9 @@ final class KeyboardViewController: UIInputViewController {
             alternativesPopup?.updateHighlight(forTouchAt: location)
 
         case .ended:
-            if let selected = alternativesPopup?.selectedAlternative {
-                textDocumentProxy.insertText(selected)
-                pendingCorrectedText = nil
-            }
+            let charToInsert = alternativesPopup?.selectedAlternative ?? key
+            textDocumentProxy.insertText(charToInsert)
+            pendingCorrectedText = nil
             dismissAlternativesPopup()
 
         case .cancelled, .failed:

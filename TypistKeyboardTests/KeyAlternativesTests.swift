@@ -79,11 +79,15 @@ final class KeyAlternativesTests: XCTestCase {
     func testSHasEszett() {
         let alts = KeyAlternatives.alternatives(for: "s")
         XCTAssertTrue(alts.contains("ß"), "s → ß must be present")
+        XCTAssertTrue(alts.contains("ś"), "s → ś must be present")
+        XCTAssertTrue(alts.contains("š"), "s → š must be present")
     }
 
     func testCHasCedilla() {
         let alts = KeyAlternatives.alternatives(for: "c")
         XCTAssertTrue(alts.contains("ç"), "c → ç must be present")
+        XCTAssertTrue(alts.contains("ć"), "c → ć must be present")
+        XCTAssertTrue(alts.contains("č"), "c → č must be present")
     }
 
     // MARK: - Lookup semantics
@@ -114,5 +118,34 @@ final class KeyAlternativesTests: XCTestCase {
         XCTAssertEqual(KeyAlternatives.alternatives(for: "e"),
                        KeyAlternatives.alternatives(for: "e"),
                        "Repeated lookups for the same key must return identical results")
+    }
+
+    // MARK: - Long-press release without slide (TYP-539 regression)
+
+    func testLongPressReleaseWithoutSlideYieldsNilSelection() {
+        // A fresh popup with no touch activity must report nil — the .ended handler
+        // uses this to fall back to inserting the base character instead of
+        // swallowing the keypress (fixes TYP-539).
+        let popup = AlternativesPopupView(alternatives: ["é", "è", "ê"])
+        XCTAssertNil(popup.selectedAlternative,
+                     "selectedAlternative must be nil when no alternative has been highlighted")
+    }
+
+    func testLongPressSlideHighlightsCorrectAlternative() {
+        // Simulate slide: touch lands inside the first cell so the opposite path is
+        // covered — an alternative IS selected and should be inserted.
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 400, height: 200))
+        let popup = AlternativesPopupView(alternatives: ["é", "è", "ê"])
+        let popupSize = AlternativesPopupView.size(for: 3)
+        popup.frame = CGRect(x: 100, y: 100, width: popupSize.width, height: popupSize.height)
+        container.addSubview(popup)
+
+        // Touch center of first cell in superview coordinates.
+        let touchX = popup.frame.minX + AlternativesPopupView.padding + AlternativesPopupView.cellSize / 2
+        let touchY = popup.frame.midY
+        popup.updateHighlight(forTouchAt: CGPoint(x: touchX, y: touchY))
+
+        XCTAssertEqual(popup.selectedAlternative, "é",
+                       "Sliding over the first cell must select the first alternative")
     }
 }
