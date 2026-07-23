@@ -120,9 +120,10 @@ final class GrammarToolbar: UIView {
     func hideAutocorrectIndicator() {
         UIView.animate(withDuration: 0.2) {
             self.autocorrectIndicatorView.alpha = 0
-        } completion: { _ in
-            self.autocorrectIndicatorView.isHidden = true
-            self.autocorrectIndicatorView.alpha = 1
+        } completion: { [weak self] _ in
+            guard let view = self?.autocorrectIndicatorView, view.alpha == 0 else { return }
+            view.isHidden = true
+            view.alpha = 1
         }
     }
 }
