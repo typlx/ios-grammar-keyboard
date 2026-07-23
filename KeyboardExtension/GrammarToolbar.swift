@@ -121,8 +121,12 @@ final class GrammarToolbar: UIView {
         UIView.animate(withDuration: 0.2) {
             self.autocorrectIndicatorView.alpha = 0
         } completion: { _ in
-            self.autocorrectIndicatorView.isHidden = true
-            self.autocorrectIndicatorView.alpha = 1
+            // Guard against re-show race: if showAutocorrectIndicator fired during
+            // the animation, alpha was already restored to 1 — don't hide it again.
+            if self.autocorrectIndicatorView.alpha == 0 {
+                self.autocorrectIndicatorView.isHidden = true
+                self.autocorrectIndicatorView.alpha = 1
+            }
         }
     }
 }
