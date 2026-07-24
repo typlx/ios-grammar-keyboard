@@ -3,7 +3,7 @@ import UIKit
 final class SettingsViewController: UITableViewController {
 
     private enum Section: Int, CaseIterable {
-        case appearance, provider, apiKey, model, apiURL, context, about
+        case appearance, typing, provider, apiKey, model, apiURL, context, about
     }
 
     private var selectedProvider: ProviderType = .openAI
@@ -14,6 +14,12 @@ final class SettingsViewController: UITableViewController {
     private var openAIURL = ""
     private var anthropicURL = ""
     private var selectedContext: ContextType = .general
+
+    // Typing mechanics toggles
+    private var autocapEnabled = true
+    private var doubleSpacePeriodEnabled = true
+    private var hapticFeedbackEnabled = true
+    private var autocorrectEnabled = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,6 +50,11 @@ final class SettingsViewController: UITableViewController {
         anthropicURL = defaults.string(forKey: AppGroupConfig.DefaultsKey.anthropicURL.rawValue) ?? ProviderConfig.defaultAnthropic.apiURL
         let contextRaw = defaults.string(forKey: AppGroupConfig.DefaultsKey.defaultContext.rawValue) ?? ContextType.general.rawValue
         selectedContext = ContextType(rawValue: contextRaw) ?? .general
+        // Typing toggles (all default on)
+        autocapEnabled = AppGroupConfig.bool(for: .autocapEnabled, defaultValue: true)
+        doubleSpacePeriodEnabled = AppGroupConfig.bool(for: .doubleSpacePeriodEnabled, defaultValue: true)
+        hapticFeedbackEnabled = AppGroupConfig.bool(for: .hapticFeedbackEnabled, defaultValue: true)
+        autocorrectEnabled = AppGroupConfig.bool(for: .autocorrectEnabled, defaultValue: true)
     }
 
     @objc private func save() {
@@ -54,6 +65,10 @@ final class SettingsViewController: UITableViewController {
         defaults.set(openAIURL, forKey: AppGroupConfig.DefaultsKey.openAIURL.rawValue)
         defaults.set(anthropicURL, forKey: AppGroupConfig.DefaultsKey.anthropicURL.rawValue)
         defaults.set(selectedContext.rawValue, forKey: AppGroupConfig.DefaultsKey.defaultContext.rawValue)
+        AppGroupConfig.set(autocapEnabled, for: .autocapEnabled)
+        AppGroupConfig.set(doubleSpacePeriodEnabled, for: .doubleSpacePeriodEnabled)
+        AppGroupConfig.set(hapticFeedbackEnabled, for: .hapticFeedbackEnabled)
+        AppGroupConfig.set(autocorrectEnabled, for: .autocorrectEnabled)
 
         do {
             if !openAIKey.isEmpty { try KeychainManager.shared.saveAPIKey(openAIKey, slot: .openAI) }
@@ -75,6 +90,7 @@ final class SettingsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
         case .appearance: return 1
+        case .typing: return 4
         case .provider: return ProviderType.allCases.count
         case .apiKey: return 2
         case .model: return 2
@@ -87,6 +103,7 @@ final class SettingsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch Section(rawValue: section)! {
         case .appearance: return "Appearance"
+        case .typing: return "Typing"
         case .provider: return "Provider"
         case .apiKey: return "API Keys (stored in Keychain)"
         case .model: return "Models"
@@ -103,6 +120,23 @@ final class SettingsViewController: UITableViewController {
             cell.textLabel?.text = "Theme"
             cell.detailTextLabel?.text = ThemeManager.shared.selectedPreset.displayName
             cell.accessoryType = .disclosureIndicator
+            return cell
+
+        case .typing:
+            let labels = ["Auto-Capitalization", "Autocorrect", "Double-Space Period", "Haptic Feedback"]
+            let cell = UITableViewCell(style: .default, reuseIdentifier: "typing")
+            cell.textLabel?.text = labels[indexPath.row]
+            cell.selectionStyle = .none
+            let toggle = UISwitch()
+            toggle.tag = indexPath.row
+            switch indexPath.row {
+            case 0: toggle.isOn = autocapEnabled
+            case 1: toggle.isOn = autocorrectEnabled
+            case 2: toggle.isOn = doubleSpacePeriodEnabled
+            default: toggle.isOn = hapticFeedbackEnabled
+            }
+            toggle.addTarget(self, action: #selector(typingToggleChanged(_:)), for: .valueChanged)
+            cell.accessoryView = toggle
             return cell
 
         case .provider:
@@ -181,7 +215,18 @@ final class SettingsViewController: UITableViewController {
         case .context:
             selectedContext = ContextType.allCases[indexPath.row]
             tableView.reloadSections([Section.context.rawValue], with: .none)
-        case .about, .apiKey, .model, .apiURL: break
+        case .about, .apiKey, .model, .apiURL, .typing: break
+        }
+    }
+
+    // MARK: - Typing toggle
+
+    @objc private func typingToggleChanged(_ sender: UISwitch) {
+        switch sender.tag {
+        case 0: autocapEnabled = sender.isOn
+        case 1: autocorrectEnabled = sender.isOn
+        case 2: doubleSpacePeriodEnabled = sender.isOn
+        default: hapticFeedbackEnabled = sender.isOn
         }
     }
 

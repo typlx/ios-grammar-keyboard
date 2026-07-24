@@ -30,6 +30,16 @@ public extension AppGroupConfig {
         case customKeyBackground = "customKeyBackground"
         case customKeyText = "customKeyText"
         case customAccent = "customAccent"
+        // Typing mechanics toggles (default on)
+        case autocapEnabled = "autocapEnabled"
+        case doubleSpacePeriodEnabled = "doubleSpacePeriodEnabled"
+        case hapticFeedbackEnabled = "hapticFeedbackEnabled"
+        // Autocorrect toggle
+        case autocorrectEnabled = "autocorrectEnabled"
+        // Word suggestions
+        case wordSuggestionsEnabled = "wordSuggestionsEnabled"
+        // Grammar correction language
+        case language = "language"
     }
 
     static func set<T>(_ value: T, for key: DefaultsKey) {
@@ -38,6 +48,11 @@ public extension AppGroupConfig {
 
     static func string(for key: DefaultsKey) -> String? {
         sharedDefaults.string(forKey: key.rawValue)
+    }
+
+    static func bool(for key: DefaultsKey, defaultValue: Bool) -> Bool {
+        guard sharedDefaults.object(forKey: key.rawValue) != nil else { return defaultValue }
+        return sharedDefaults.bool(forKey: key.rawValue)
     }
 
     static func providerConfig(for type: ProviderType) -> ProviderConfig {
@@ -62,5 +77,27 @@ public extension AppGroupConfig {
         let typeRaw = string(for: .selectedProvider) ?? ProviderType.openAI.rawValue
         let type = ProviderType(rawValue: typeRaw) ?? .openAI
         return providerConfig(for: type)
+    }
+}
+
+// MARK: - CorrectionLanguage
+
+public enum CorrectionLanguage: String, CaseIterable {
+    case english = "en"
+    case french = "fr"
+    case spanish = "es"
+    case german = "de"
+    case italian = "it"
+    case portuguese = "pt"
+
+    public var displayName: String {
+        switch self {
+        case .english: return "English"
+        case .french: return "French"
+        case .spanish: return "Spanish"
+        case .german: return "German"
+        case .italian: return "Italian"
+        case .portuguese: return "Portuguese"
+        }
     }
 }

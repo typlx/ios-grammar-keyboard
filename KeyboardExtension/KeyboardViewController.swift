@@ -13,6 +13,16 @@ final class KeyboardViewController: UIInputViewController {
     // Tracks the last text seen from the proxy to detect changes.
     private var lastSeenText: String = ""
 
+    // Double-space-to-period: timestamp of the previous space tap.
+    private var lastSpaceTapTime: Date?
+
+    // Haptic feedback generator — created lazily so the device capability check happens at runtime.
+    private lazy var hapticGenerator: UIImpactFeedbackGenerator = {
+        let g = UIImpactFeedbackGenerator(style: .light)
+        g.prepare()
+        return g
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         configureProvider()
@@ -262,14 +272,39 @@ final class KeyboardViewController: UIInputViewController {
 
     @objc private func keyTapped(_ sender: UIButton) {
         guard let title = sender.currentTitle else { return }
-        textDocumentProxy.insertText(title)
+        triggerHaptic()
+        lastSpaceTapTime = nil
+        let needsCap = shouldAutoCap()
+        if needsCap && title.count == 1 {
+            textDocumentProxy.insertText(title.uppercased())
+        } else {
+            textDocumentProxy.insertText(title)
+        }
     }
 
     @objc private func spaceTapped() {
+        triggerHaptic()
+
         let before = textDocumentProxy.documentContextBeforeInput ?? ""
+
+        // Double-space-to-period: if last tap was also a space and it was recent, convert to ". "
+        let doubleSpaceEnabled = AppGroupConfig.bool(for: .doubleSpacePeriodEnabled, defaultValue: true)
+        if doubleSpaceEnabled, let last = lastSpaceTapTime, Date().timeIntervalSince(last) < 0.7 {
+            // Only convert if the text before cursor ends with a single space (not already ". ")
+            if before.hasSuffix(" ") && !before.hasSuffix(". ") {
+                textDocumentProxy.deleteBackward() // remove the first space
+                textDocumentProxy.insertText(". ")
+                lastSpaceTapTime = nil
+                return
+            }
+        }
+
+        lastSpaceTapTime = Date()
+
         let lastWord = before.components(separatedBy: .whitespacesAndNewlines).last ?? ""
 
-        if !lastWord.isEmpty, let correction = AutocorrectDictionary.correction(for: lastWord) {
+        let autocorrectEnabled = AppGroupConfig.bool(for: .autocorrectEnabled, defaultValue: true)
+        if autocorrectEnabled, !lastWord.isEmpty, let correction = AutocorrectDictionary.correction(for: lastWord) {
             for _ in 0..<lastWord.count {
                 textDocumentProxy.deleteBackward()
             }
@@ -281,11 +316,33 @@ final class KeyboardViewController: UIInputViewController {
     }
 
     @objc private func deleteTapped() {
+        triggerHaptic()
+        lastSpaceTapTime = nil
         textDocumentProxy.deleteBackward()
     }
 
     @objc private func returnTapped() {
+        triggerHaptic()
+        lastSpaceTapTime = nil
         textDocumentProxy.insertText("\n")
+    }
+
+    // MARK: - Auto-Capitalization
+
+    /// Returns true when the character about to be typed should be uppercased.
+    /// Capitalizes after ". ", "! ", "? " or when the document is empty.
+    func shouldAutoCap() -> Bool {
+        guard AppGroupConfig.bool(for: .autocapEnabled, defaultValue: true) else { return false }
+        let before = textDocumentProxy.documentContextBeforeInput ?? ""
+        if before.isEmpty { return true }
+        return AutoCapHelper.shouldCapitalize(after: before)
+    }
+
+    // MARK: - Haptic Feedback
+
+    private func triggerHaptic() {
+        guard AppGroupConfig.bool(for: .hapticFeedbackEnabled, defaultValue: true) else { return }
+        hapticGenerator.impactOccurred()
     }
 
     // MARK: - Text Document Proxy Helpers
