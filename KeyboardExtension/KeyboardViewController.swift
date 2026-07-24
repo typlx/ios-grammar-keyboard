@@ -243,7 +243,7 @@ final class KeyboardViewController: UIInputViewController {
 
     @objc private func spaceTapped() {
         let before = textDocumentProxy.documentContextBeforeInput ?? ""
-        let lastWord = before.components(separatedBy: .whitespaces).last ?? ""
+        let lastWord = before.components(separatedBy: .whitespacesAndNewlines).last ?? ""
 
         if !lastWord.isEmpty, let correction = AutocorrectDictionary.correction(for: lastWord) {
             for _ in 0..<lastWord.count {
@@ -307,8 +307,14 @@ extension KeyboardViewController: AutocorrectStateMachineDelegate {
     }
 
     func autocorrectStateMachine(_ machine: AutocorrectStateMachine, didUndo original: String, corrected: String) {
-        // Replace the corrected word + trailing space with the original word + space.
-        textDocumentProxy.deleteBackward() // remove the space inserted after correction
+        // Bail out if the cursor has moved away from the corrected word; deleting
+        // blindly would corrupt text that the user typed after the correction.
+        guard let before = textDocumentProxy.documentContextBeforeInput,
+              before.hasSuffix(" " + corrected) else {
+            return
+        }
+        // Replace the corrected word + trailing space with the original word.
+        textDocumentProxy.deleteBackward() // remove the trailing space
         for _ in 0..<corrected.count {
             textDocumentProxy.deleteBackward()
         }

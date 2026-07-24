@@ -45,9 +45,11 @@ final class AutocorrectStateMachine {
     }
 
     private func scheduleDismiss() {
-        dismissTimer = Timer.scheduledTimer(withTimeInterval: dismissDelay, repeats: false) { [weak self] _ in
+        let timer = Timer(timeInterval: dismissDelay, repeats: false) { [weak self] _ in
             self?.dismiss()
         }
+        RunLoop.main.add(timer, forMode: .common)
+        dismissTimer = timer
     }
 
     private func cancelTimer() {
@@ -67,8 +69,6 @@ enum AutocorrectDictionary {
         "wiht": "with",
         "adn": "and",
         "nad": "and",
-        "fo": "of",
-        "ot": "to",
         "siad": "said",
         "recieve": "receive",
         "beleive": "believe",
