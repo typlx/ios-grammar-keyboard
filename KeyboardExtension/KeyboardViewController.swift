@@ -361,6 +361,7 @@ final class KeyboardViewController: UIInputViewController {
     private func updateSuggestions() {
         guard AppGroupConfig.bool(for: .wordSuggestionsEnabled, defaultValue: true) else {
             suggestionBar.update(suggestions: [])
+            suggestionBar.updateEmoji(emojis: [])
             return
         }
         let prefix = currentTypingPrefix()
@@ -372,6 +373,8 @@ final class KeyboardViewController: UIInputViewController {
             suggestions = predictionEngine.suggestions(for: prefix, context: lastCommittedWord)
         }
         suggestionBar.update(suggestions: suggestions)
+        let emojiSuggestions = prefix.isEmpty ? [] : EmojiSuggestionHelper.emojis(for: prefix)
+        suggestionBar.updateEmoji(emojis: emojiSuggestions)
     }
 
     private func currentTypingPrefix() -> String {
@@ -530,6 +533,12 @@ extension KeyboardViewController: SuggestionBarDelegate {
         }
         textDocumentProxy.insertText(word + " ")
         commitWord(word, replacing: prefix.isEmpty ? nil : prefix)
+        updateSuggestions()
+    }
+
+    func suggestionBar(_ bar: SuggestionBar, didSelectEmoji emoji: String) {
+        triggerHaptic()
+        textDocumentProxy.insertText(emoji)
         updateSuggestions()
     }
 }

@@ -13,6 +13,9 @@
 		220000000000000000000523 /* SuggestionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000051 /* SuggestionBar.swift */; };
 		220000000000000000000524 /* SuggestionBarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000052 /* SuggestionBarTests.swift */; };
 		220000000000000000000525 /* WordPredictionEdgeCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000053 /* WordPredictionEdgeCaseTests.swift */; };
+		220000000000000000000526 /* EmojiSuggestionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000054 /* EmojiSuggestionHelper.swift */; };
+		220000000000000000000527 /* EmojiSuggestionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000054 /* EmojiSuggestionHelper.swift */; };
+		220000000000000000000528 /* EmojiSuggestionHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000055 /* EmojiSuggestionHelperTests.swift */; };
 		220000000000000000000010 /* KeyboardTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000040 /* KeyboardTheme.swift */; };
 		220000000000000000000011 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000041 /* ThemeManager.swift */; };
 		220000000000000000000012 /* ThemeSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000042 /* ThemeSettingsViewController.swift */; };
@@ -128,6 +131,8 @@
 		110000000000000000000051 /* SuggestionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionBar.swift; sourceTree = "<group>"; };
 		110000000000000000000052 /* SuggestionBarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionBarTests.swift; sourceTree = "<group>"; };
 		110000000000000000000053 /* WordPredictionEdgeCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordPredictionEdgeCaseTests.swift; sourceTree = "<group>"; };
+		110000000000000000000054 /* EmojiSuggestionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiSuggestionHelper.swift; sourceTree = "<group>"; };
+		110000000000000000000055 /* EmojiSuggestionHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiSuggestionHelperTests.swift; sourceTree = "<group>"; };
 		110000000000000000000040 /* KeyboardTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardTheme.swift; sourceTree = "<group>"; };
 		110000000000000000000041 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		110000000000000000000042 /* ThemeSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsViewController.swift; sourceTree = "<group>"; };
@@ -207,6 +212,7 @@
 				110000000000000000000037 /* AutocorrectIndicatorView.swift */,
 				110000000000000000000050 /* WordPredictionEngine.swift */,
 				110000000000000000000051 /* SuggestionBar.swift */,
+				110000000000000000000054 /* EmojiSuggestionHelper.swift */,
 				110000000000000000000015 /* Info.plist */,
 				11000000000000000000001A /* KeyboardExtension.entitlements */,
 			);
@@ -275,6 +281,7 @@
 				110000000000000000000043 /* ThemeTests.swift */,
 				110000000000000000000052 /* SuggestionBarTests.swift */,
 				110000000000000000000053 /* WordPredictionEdgeCaseTests.swift */,
+				110000000000000000000055 /* EmojiSuggestionHelperTests.swift */,
 			);
 			path = TypistKeyboardTests;
 			sourceTree = "<group>";
@@ -432,6 +439,7 @@
 				220000000000000000000011 /* ThemeManager.swift in Sources */,
 				220000000000000000000520 /* WordPredictionEngine.swift in Sources */,
 				220000000000000000000522 /* SuggestionBar.swift in Sources */,
+				220000000000000000000526 /* EmojiSuggestionHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,6 +465,7 @@
 				22000000000000000000050C /* AutocorrectIndicatorView.swift in Sources */,
 				220000000000000000000521 /* WordPredictionEngine.swift in Sources */,
 				220000000000000000000523 /* SuggestionBar.swift in Sources */,
+				220000000000000000000527 /* EmojiSuggestionHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +483,7 @@
 				22000000000000000000020F /* ThemeTests.swift in Sources */,
 				220000000000000000000524 /* SuggestionBarTests.swift in Sources */,
 				220000000000000000000525 /* WordPredictionEdgeCaseTests.swift in Sources */,
+				220000000000000000000528 /* EmojiSuggestionHelperTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
