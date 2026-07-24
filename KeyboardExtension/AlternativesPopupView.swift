@@ -87,10 +87,10 @@ final class AlternativesPopupView: UIView {
 
         // Clamp to first/last cell when touch is horizontally outside the popup.
         if newIndex == nil {
-            if localX >= -Self.padding && localX < cells.first?.frame.minX ?? 0 {
+            if localX >= -Self.padding && localX < (cells.first?.frame.minX ?? 0) {
                 newIndex = 0
             } else if localX <= bounds.width + Self.padding
-                        && localX > cells.last?.frame.maxX ?? bounds.width {
+                        && localX > (cells.last?.frame.maxX ?? bounds.width) {
                 newIndex = cells.count - 1
             }
         }
