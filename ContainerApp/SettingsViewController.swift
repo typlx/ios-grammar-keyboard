@@ -3,7 +3,7 @@ import UIKit
 final class SettingsViewController: UITableViewController {
 
     private enum Section: Int, CaseIterable {
-        case provider, apiKey, model, apiURL, context, about
+        case appearance, provider, apiKey, model, apiURL, context, about
     }
 
     private var selectedProvider: ProviderType = .openAI
@@ -25,6 +25,11 @@ final class SettingsViewController: UITableViewController {
             action: #selector(save)
         )
         tableView.keyboardDismissMode = .onDrag
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadSections([Section.appearance.rawValue], with: .none)
     }
 
     private func loadSettings() {
@@ -69,6 +74,7 @@ final class SettingsViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
+        case .appearance: return 1
         case .provider: return ProviderType.allCases.count
         case .apiKey: return 2
         case .model: return 2
@@ -80,6 +86,7 @@ final class SettingsViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch Section(rawValue: section)! {
+        case .appearance: return "Appearance"
         case .provider: return "Provider"
         case .apiKey: return "API Keys (stored in Keychain)"
         case .model: return "Models"
@@ -91,6 +98,13 @@ final class SettingsViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch Section(rawValue: indexPath.section)! {
+        case .appearance:
+            let cell = UITableViewCell(style: .value1, reuseIdentifier: "appearance")
+            cell.textLabel?.text = "Theme"
+            cell.detailTextLabel?.text = ThemeManager.shared.selectedPreset.displayName
+            cell.accessoryType = .disclosureIndicator
+            return cell
+
         case .provider:
             let type = ProviderType.allCases[indexPath.row]
             let cell = UITableViewCell(style: .default, reuseIdentifier: "provider")
@@ -158,6 +172,9 @@ final class SettingsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         switch Section(rawValue: indexPath.section)! {
+        case .appearance:
+            let vc = ThemeSettingsViewController(style: .insetGrouped)
+            navigationController?.pushViewController(vc, animated: true)
         case .provider:
             selectedProvider = ProviderType.allCases[indexPath.row]
             tableView.reloadSections([Section.provider.rawValue], with: .none)

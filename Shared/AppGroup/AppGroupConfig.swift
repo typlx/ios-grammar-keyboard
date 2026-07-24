@@ -26,6 +26,10 @@ public extension AppGroupConfig {
         case anthropicURL = "anthropicURL"
         case processingMode = "processingMode"
         case defaultContext = "defaultContext"
+        case themePreset = "themePreset"
+        case customKeyBackground = "customKeyBackground"
+        case customKeyText = "customKeyText"
+        case customAccent = "customAccent"
     }
 
     static func set<T>(_ value: T, for key: DefaultsKey) {
