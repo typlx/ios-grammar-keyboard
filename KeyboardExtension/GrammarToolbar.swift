@@ -130,7 +130,6 @@ final class GrammarToolbar: UIView {
         } completion: { [weak self] _ in
             guard let view = self?.autocorrectIndicatorView, view.alpha == 0 else { return }
             view.isHidden = true
-            view.alpha = 1
         }
     }
 }
