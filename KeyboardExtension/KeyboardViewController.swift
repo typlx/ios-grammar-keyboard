@@ -3,6 +3,8 @@ import UIKit
 final class KeyboardViewController: UIInputViewController {
 
     private let grammarToolbar = GrammarToolbar()
+    private let suggestionBar = SuggestionBar()
+    private let predictionEngine = WordPredictionEngine()
     private var keyboardView: UIView?
     private var currentProvider: (any GrammarProvider)?
     private var pendingCorrectedText: String?
@@ -16,6 +18,9 @@ final class KeyboardViewController: UIInputViewController {
     // Double-space-to-period: timestamp of the previous space tap.
     private var lastSpaceTapTime: Date?
 
+    // Last committed word for bigram context.
+    private var lastCommittedWord: String?
+
     // Haptic feedback generator — created lazily so the device capability check happens at runtime.
     private lazy var hapticGenerator: UIImpactFeedbackGenerator = {
         let g = UIImpactFeedbackGenerator(style: .light)
@@ -27,17 +32,20 @@ final class KeyboardViewController: UIInputViewController {
         super.viewDidLoad()
         configureProvider()
         setupToolbar()
+        setupSuggestionBar()
         setupKeyboard()
         autocorrectMachine.delegate = self
         grammarToolbar.onAutocorrectUndo = { [weak self] in
             self?.autocorrectMachine.undo()
         }
+        suggestionBar.delegate = self
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureProvider()
         applyTheme()
+        updateSuggestions()
     }
 
     // MARK: - Theme
@@ -51,6 +59,7 @@ final class KeyboardViewController: UIInputViewController {
             btn.layer.shadowColor = UIColor.black.cgColor
         }
         grammarToolbar.applyTheme(theme)
+        suggestionBar.applyTheme(theme)
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -81,6 +90,17 @@ final class KeyboardViewController: UIInputViewController {
         ])
     }
 
+    private func setupSuggestionBar() {
+        suggestionBar.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(suggestionBar)
+        NSLayoutConstraint.activate([
+            suggestionBar.topAnchor.constraint(equalTo: grammarToolbar.bottomAnchor),
+            suggestionBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            suggestionBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            suggestionBar.heightAnchor.constraint(equalToConstant: 36),
+        ])
+    }
+
     private func setupKeyboard() {
         // Build a simple standard QWERTY-style keyboard using UIButtons.
         // In a production build this would be replaced with a full custom keyboard layout.
@@ -88,7 +108,7 @@ final class KeyboardViewController: UIInputViewController {
         keyboard.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(keyboard)
         NSLayoutConstraint.activate([
-            keyboard.topAnchor.constraint(equalTo: grammarToolbar.bottomAnchor),
+            keyboard.topAnchor.constraint(equalTo: suggestionBar.bottomAnchor),
             keyboard.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             keyboard.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             keyboard.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -280,6 +300,7 @@ final class KeyboardViewController: UIInputViewController {
         } else {
             textDocumentProxy.insertText(title)
         }
+        updateSuggestions()
     }
 
     @objc private func spaceTapped() {
@@ -310,21 +331,65 @@ final class KeyboardViewController: UIInputViewController {
             }
             textDocumentProxy.insertText(correction + " ")
             autocorrectMachine.show(original: lastWord, corrected: correction)
+            commitWord(correction, replacing: lastWord)
         } else {
             textDocumentProxy.insertText(" ")
+            if !lastWord.isEmpty {
+                commitWord(lastWord, replacing: nil)
+            }
         }
+
+        updateSuggestions()
     }
 
     @objc private func deleteTapped() {
         triggerHaptic()
         lastSpaceTapTime = nil
         textDocumentProxy.deleteBackward()
+        updateSuggestions()
     }
 
     @objc private func returnTapped() {
         triggerHaptic()
         lastSpaceTapTime = nil
         textDocumentProxy.insertText("\n")
+        updateSuggestions()
+    }
+
+    // MARK: - Word Prediction
+
+    private func updateSuggestions() {
+        guard AppGroupConfig.bool(for: .wordSuggestionsEnabled, defaultValue: true) else {
+            suggestionBar.update(suggestions: [])
+            return
+        }
+        let prefix = currentTypingPrefix()
+        let suggestions: [String]
+        if prefix.isEmpty {
+            // Next-word prediction
+            suggestions = predictionEngine.suggestions(for: "", context: lastCommittedWord)
+        } else {
+            suggestions = predictionEngine.suggestions(for: prefix, context: lastCommittedWord)
+        }
+        suggestionBar.update(suggestions: suggestions)
+    }
+
+    private func currentTypingPrefix() -> String {
+        let before = textDocumentProxy.documentContextBeforeInput ?? ""
+        // Return the trailing run of letters (the word the user is currently typing)
+        var prefix = ""
+        for ch in before.reversed() {
+            guard ch.isLetter else { break }
+            prefix = String(ch) + prefix
+        }
+        return prefix.lowercased()
+    }
+
+    private func commitWord(_ word: String, replacing original: String?) {
+        let clean = word.lowercased().filter { $0.isLetter }
+        guard clean.count >= 2 else { return }
+        predictionEngine.learn(word: clean, after: lastCommittedWord)
+        lastCommittedWord = clean
     }
 
     // MARK: - Auto-Capitalization
@@ -447,5 +512,24 @@ extension KeyboardViewController: GrammarToolbarDelegate {
                 }
             }
         }
+    }
+}
+
+// MARK: - SuggestionBarDelegate
+
+extension KeyboardViewController: SuggestionBarDelegate {
+    func suggestionBar(_ bar: SuggestionBar, didSelect word: String) {
+        triggerHaptic()
+
+        let prefix = currentTypingPrefix()
+        if !prefix.isEmpty {
+            // Replace the in-progress partial word
+            for _ in 0..<prefix.count {
+                textDocumentProxy.deleteBackward()
+            }
+        }
+        textDocumentProxy.insertText(word + " ")
+        commitWord(word, replacing: prefix.isEmpty ? nil : prefix)
+        updateSuggestions()
     }
 }

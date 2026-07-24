@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		220000000000000000000520 /* WordPredictionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000050 /* WordPredictionEngine.swift */; };
+		220000000000000000000521 /* WordPredictionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000050 /* WordPredictionEngine.swift */; };
+		220000000000000000000522 /* SuggestionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000051 /* SuggestionBar.swift */; };
+		220000000000000000000523 /* SuggestionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000051 /* SuggestionBar.swift */; };
+		220000000000000000000524 /* SuggestionBarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000052 /* SuggestionBarTests.swift */; };
+		220000000000000000000525 /* WordPredictionEdgeCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000053 /* WordPredictionEdgeCaseTests.swift */; };
 		220000000000000000000010 /* KeyboardTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000040 /* KeyboardTheme.swift */; };
 		220000000000000000000011 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000041 /* ThemeManager.swift */; };
 		220000000000000000000012 /* ThemeSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110000000000000000000042 /* ThemeSettingsViewController.swift */; };
@@ -118,6 +124,10 @@
 		110000000000000000000037 /* AutocorrectIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutocorrectIndicatorView.swift; sourceTree = "<group>"; };
 		110000000000000000000038 /* AutocorrectIndicatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutocorrectIndicatorTests.swift; sourceTree = "<group>"; };
 		110000000000000000000043 /* ThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTests.swift; sourceTree = "<group>"; };
+		110000000000000000000050 /* WordPredictionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordPredictionEngine.swift; sourceTree = "<group>"; };
+		110000000000000000000051 /* SuggestionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionBar.swift; sourceTree = "<group>"; };
+		110000000000000000000052 /* SuggestionBarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionBarTests.swift; sourceTree = "<group>"; };
+		110000000000000000000053 /* WordPredictionEdgeCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordPredictionEdgeCaseTests.swift; sourceTree = "<group>"; };
 		110000000000000000000040 /* KeyboardTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardTheme.swift; sourceTree = "<group>"; };
 		110000000000000000000041 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		110000000000000000000042 /* ThemeSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsViewController.swift; sourceTree = "<group>"; };
@@ -195,6 +205,8 @@
 				110000000000000000000034 /* AlternativesPopupView.swift */,
 				110000000000000000000036 /* AutocorrectStateMachine.swift */,
 				110000000000000000000037 /* AutocorrectIndicatorView.swift */,
+				110000000000000000000050 /* WordPredictionEngine.swift */,
+				110000000000000000000051 /* SuggestionBar.swift */,
 				110000000000000000000015 /* Info.plist */,
 				11000000000000000000001A /* KeyboardExtension.entitlements */,
 			);
@@ -261,6 +273,8 @@
 				110000000000000000000035 /* KeyAlternativesTests.swift */,
 				110000000000000000000038 /* AutocorrectIndicatorTests.swift */,
 				110000000000000000000043 /* ThemeTests.swift */,
+				110000000000000000000052 /* SuggestionBarTests.swift */,
+				110000000000000000000053 /* WordPredictionEdgeCaseTests.swift */,
 			);
 			path = TypistKeyboardTests;
 			sourceTree = "<group>";
@@ -416,6 +430,8 @@
 				22000000000000000000000C /* SystemPrompts.swift in Sources */,
 				220000000000000000000010 /* KeyboardTheme.swift in Sources */,
 				220000000000000000000011 /* ThemeManager.swift in Sources */,
+				220000000000000000000520 /* WordPredictionEngine.swift in Sources */,
+				220000000000000000000522 /* SuggestionBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,6 +455,8 @@
 				22000000000000000000050A /* AlternativesPopupView.swift in Sources */,
 				22000000000000000000050B /* AutocorrectStateMachine.swift in Sources */,
 				22000000000000000000050C /* AutocorrectIndicatorView.swift in Sources */,
+				220000000000000000000521 /* WordPredictionEngine.swift in Sources */,
+				220000000000000000000523 /* SuggestionBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -454,6 +472,8 @@
 				22000000000000000000020D /* KeyAlternativesTests.swift in Sources */,
 				22000000000000000000020E /* AutocorrectIndicatorTests.swift in Sources */,
 				22000000000000000000020F /* ThemeTests.swift in Sources */,
+				220000000000000000000524 /* SuggestionBarTests.swift in Sources */,
+				220000000000000000000525 /* WordPredictionEdgeCaseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
