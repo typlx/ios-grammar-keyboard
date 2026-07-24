@@ -10,6 +10,12 @@ final class GrammarToolbar: UIView {
     private let fixButton = UIButton(type: .system)
     private let previewLabel = UILabel()
     private let activityIndicator = UIActivityIndicatorView(style: .medium)
+    private let autocorrectIndicatorView = AutocorrectIndicatorView()
+
+    var onAutocorrectUndo: (() -> Void)? {
+        get { autocorrectIndicatorView.onTap }
+        set { autocorrectIndicatorView.onTap = newValue }
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -57,6 +63,16 @@ final class GrammarToolbar: UIView {
             hStack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -12),
             hStack.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
+
+        // Autocorrect indicator — anchored to trailing edge, hidden until a correction fires
+        autocorrectIndicatorView.isHidden = true
+        autocorrectIndicatorView.alpha = 0
+        autocorrectIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(autocorrectIndicatorView)
+        NSLayoutConstraint.activate([
+            autocorrectIndicatorView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            autocorrectIndicatorView.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
     }
 
     @objc private func fixTapped() {
@@ -89,5 +105,25 @@ final class GrammarToolbar: UIView {
         previewLabel.text = ""
         previewLabel.textColor = .secondaryLabel
         fixButton.isEnabled = true
+    }
+
+    // MARK: - Autocorrect indicator
+
+    func showAutocorrectIndicator(original: String, corrected: String) {
+        autocorrectIndicatorView.configure(original: original, corrected: corrected)
+        autocorrectIndicatorView.isHidden = false
+        UIView.animate(withDuration: 0.2) {
+            self.autocorrectIndicatorView.alpha = 1
+        }
+    }
+
+    func hideAutocorrectIndicator() {
+        UIView.animate(withDuration: 0.2) {
+            self.autocorrectIndicatorView.alpha = 0
+        } completion: { [weak self] _ in
+            guard let view = self?.autocorrectIndicatorView, view.alpha == 0 else { return }
+            view.isHidden = true
+            view.alpha = 1
+        }
     }
 }
