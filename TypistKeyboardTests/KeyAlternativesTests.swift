@@ -79,11 +79,15 @@ final class KeyAlternativesTests: XCTestCase {
     func testSHasEszett() {
         let alts = KeyAlternatives.alternatives(for: "s")
         XCTAssertTrue(alts.contains("ß"), "s → ß must be present")
+        XCTAssertTrue(alts.contains("ś"), "s → ś must be present")
+        XCTAssertTrue(alts.contains("š"), "s → š must be present")
     }
 
     func testCHasCedilla() {
         let alts = KeyAlternatives.alternatives(for: "c")
         XCTAssertTrue(alts.contains("ç"), "c → ç must be present")
+        XCTAssertTrue(alts.contains("ć"), "c → ć must be present")
+        XCTAssertTrue(alts.contains("č"), "c → č must be present")
     }
 
     // MARK: - Lookup semantics
